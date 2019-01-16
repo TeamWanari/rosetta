@@ -1,0 +1,14 @@
+name: rosetta
+description: >-
+  Annotation library used to simplify localization
+  in Flutter. The library also uses a generator
+  dependency called "rosetta_generator".
+version: 0.0.1
+authors:
+- Adam Hosszu <edemlonger@gmail.com>
+- Renato Kiss <renato.kiss.dev@gmail.com>
+- Tamas Agocs <agta91@gmail.com>
+homepage: https://github.com/TeamWanari/rosetta
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"

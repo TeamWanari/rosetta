@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      rosetta_generator|rosetta:
+        enabled: true
+
+builders:
+  rosetta:
+    target: ":rosetta_generator"
+    import: "package:rosetta_generator/rosetta_generator.dart"
+    builder_factories: ["rosettaStoneBuilder"]
+    build_extensions: {".dart": [".rosetta.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

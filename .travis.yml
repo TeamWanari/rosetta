@@ -1,0 +1,57 @@
+# Created with package:mono_repo v1.2.1
+language: dart
+
+jobs:
+  include:
+    - stage: analyze
+      name: "SDK: stable - DIR: rosetta - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="rosetta"
+      dart: stable
+    - stage: analyze
+      name: "SDK: dev - DIR: rosetta - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="rosetta"
+      dart: dev
+    - stage: analyze
+      name: "SDK: stable - DIR: rosetta - TASKS: dartanalyzer --fatal-infos --fatal-warnings ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="rosetta"
+      dart: stable
+    - stage: analyze
+      name: "SDK: dev - DIR: rosetta - TASKS: dartanalyzer --fatal-infos --fatal-warnings ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="rosetta"
+      dart: dev
+    - stage: analyze
+      name: "SDK: stable - DIR: rosetta_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="rosetta_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: dev - DIR: rosetta_generator - TASKS: dartfmt -n --set-exit-if-changed ."
+      script: ./tool/travis.sh dartfmt
+      env: PKG="rosetta_generator"
+      dart: dev
+    - stage: analyze
+      name: "SDK: stable - DIR: rosetta_generator - TASKS: dartanalyzer --fatal-infos --fatal-warnings ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="rosetta_generator"
+      dart: stable
+    - stage: analyze
+      name: "SDK: dev - DIR: rosetta_generator - TASKS: dartanalyzer --fatal-infos --fatal-warnings ."
+      script: ./tool/travis.sh dartanalyzer
+      env: PKG="rosetta_generator"
+      dart: dev
+
+stages:
+  - analyze
+
+# Only building master means that we don't run two builds for each pull request.
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - "$HOME/.pub-cache"
