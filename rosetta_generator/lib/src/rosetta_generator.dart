@@ -19,7 +19,9 @@ part 'rosetta_keys.dart';
 
 part 'rosetta_delegate.dart';
 
-class RosettaStoneBuilder extends GeneratorForAnnotation<Stone> {
+class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
+  const RosettaStoneGenerator();
+
   @override
   Future<String> generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
