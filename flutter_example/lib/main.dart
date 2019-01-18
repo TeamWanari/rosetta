@@ -18,7 +18,9 @@ class MyApp extends StatelessWidget {
         Translation.delegate,
       ],
       supportedLocales: [
+        const Locale("hu"),
         const Locale("en"),
+        const Locale("fr"),
         const Locale("ru"),
       ],
     );

@@ -15,7 +15,7 @@ import 'src/rosetta_generator.dart';
 
 Builder rosettaStoneBuilder(BuilderOptions options) => SharedPartBuilder(
       const [
-        const RosettaStoneGenerator(),
+        RosettaStoneGenerator(),
       ],
       'rosetta',
     );

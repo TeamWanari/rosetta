@@ -10,7 +10,7 @@ import 'dart:convert';
 part 'rosetta_generator_example.g.dart';
 
 @Stone(path: 'i18n')
-class Translation with _$TranslationHelper { 
+class Translation with _$TranslationHelper {
   static LocalizationsDelegate<Translation> delegate = _$TranslationDelegate();
 
   static Translation of(BuildContext context) {
