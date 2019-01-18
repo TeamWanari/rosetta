@@ -31,7 +31,7 @@ Import it into your pubspec `dev_dependencies:` section.
 
 ## Flutter Example
 
-[Source Code](https://github.com/TeamWanari/rosetta/tree/master/example)
+[Source Code](https://github.com/TeamWanari/rosetta/tree/master/flutter_example)
 
 An example showing how to setup `rosetta` and `rosetta_generator` inside a Flutter project.
 
