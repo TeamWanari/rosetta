@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:rosetta/rosetta.dart';
-import 'dart:ui';
+
+/*
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'dart:convert';
+*/
 
 part 'rosetta_generator_example.g.dart';
 
