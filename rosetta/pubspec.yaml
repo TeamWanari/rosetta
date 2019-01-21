@@ -3,7 +3,7 @@ description: >-
   Annotation library used to simplify localization
   in Flutter. The library also uses a generator
   dependency called "rosetta_generator".
-version: 0.0.1+1
+version: 0.0.1+4
 authors:
 - Adam Hosszu <edemlonger@gmail.com>
 - Renato Kiss <renato.kiss.dev@gmail.com>
@@ -12,3 +12,8 @@ homepage: https://github.com/TeamWanari/rosetta
 
 environment:
   sdk: ">=2.0.0 <3.0.0"
+
+#
+# dev_dependencies:
+#  flutter:
+#    sdk: flutter
