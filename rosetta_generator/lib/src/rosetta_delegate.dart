@@ -5,74 +5,57 @@ Class generateDelegate(String className, List<String> languages) {
 
   return Class((builder) => builder
     ..name = '_\$$delegateClassName'
-    ..extend = _delegateReference(className)
+    ..extend = _localizationDelegateOf(className)
     ..methods.addAll(_delegateMethods(className, languages)));
 }
 
-List<Method> _delegateMethods(String className, List<String> languages) {
-  var localeParamName = 'locale';
+List<Method> _delegateMethods(String className, List<String> languages) => [
+      _isSupported(languages),
+      _shouldReload(className),
+      _load(className),
+    ];
 
-  return [
-    _isSupported(languages, localeParamName),
-    _shouldReload(className),
-    _load(className, localeParamName),
-  ];
-}
-
-Method _isSupported(List<String> supportedLanguages, String localParamName) {
-  var convertedList = supportedLanguages
-      .map<String>((langCode) => '"$langCode"')
-      .reduce((value, element) => '$value, $element');
-
-  return Method((builder) => builder
-    ..annotations.add(_overrideAnnotation())
-    ..returns = refer('bool')
-    ..name = 'isSupported'
-    ..requiredParameters.add(_localeParameter(localParamName))
-    ..lambda = true
-    ..body = Code('[$convertedList].contains($localParamName.languageCode)'));
-}
+Method _isSupported(List<String> supportedLanguages) => Method(
+      (builder) => builder
+        ..annotations.add(overrideAnnotation)
+        ..returns = boolType
+        ..name = 'isSupported'
+        ..requiredParameters.add(localeParameter)
+        ..lambda = true
+        ..body = literalConstList(supportedLanguages)
+            .property("contains")
+            .call([locale.property("languageCode")]).code,
+    );
 
 Method _shouldReload(String className) {
-  return Method((builder) => builder
-    ..annotations.add(_overrideAnnotation())
-    ..returns = refer('bool')
+  return Method((mb) => mb
+    ..annotations.add(overrideAnnotation)
+    ..returns = boolType
     ..name = 'shouldReload'
-    ..requiredParameters.add(_oldDelegateParameter(className))
+    ..requiredParameters.add(Parameter(
+      (param) => param
+        ..name = 'old'
+        ..type = _localizationDelegateOf(className),
+    ))
     ..lambda = true
-    ..body = Code('false'));
+    ..body = literalFalse.code);
 }
 
-Method _load(String className, String localeParameterName) {
+Method _load(String className) {
+  var fieldName = ReCase(className).camelCase;
+  var field = refer(fieldName);
+
   return Method(
-    (builder) => builder
-      ..annotations.add(_overrideAnnotation())
-      ..returns = refer('Future<$className>')
+    (mb) => mb
+      ..annotations.add(overrideAnnotation)
+      ..returns = _futureOf(className)
       ..name = 'load'
       ..modifier = MethodModifier.async
-      ..requiredParameters.add(_localeParameter(localeParameterName))
+      ..requiredParameters.add(localeParameter)
       ..body = Block.of([
-        Code("var translations = $className();"),
-        Code("await translations.load($localeParameterName);"),
-        Code("return translations;"),
+        refer(className).newInstance([]).assignVar(fieldName).statement,
+        field.property(_loadMethodName).call([locale]).awaited.statement,
+        field.returned.statement,
       ]),
   );
 }
-
-Parameter _localeParameter(String name) {
-  return Parameter((param) => param
-    ..name = name
-    ..type = refer('Locale'));
-}
-
-Parameter _oldDelegateParameter(String className) {
-  return Parameter((param) => param
-    ..name = 'old'
-    ..type = _delegateReference(className));
-}
-
-Reference _delegateReference(String className) {
-  return refer('LocalizationsDelegate<$className>');
-}
-
-Expression _overrideAnnotation() => CodeExpression(Code('override'));

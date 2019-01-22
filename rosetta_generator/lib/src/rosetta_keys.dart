@@ -3,15 +3,15 @@ part of 'rosetta_generator.dart';
 Class generateKeysClass(List<String> keys) {
   return Class(
     (cb) => cb
-      ..name = "_\$Keys"
+      ..name = _keysClassName
       ..fields.addAll(keys
           .map((key) => Field(
                 (fb) => fb
                   ..name = ReCase(key).camelCase
-                  ..type = refer("String")
+                  ..type = stringType
                   ..static = true
                   ..modifier = FieldModifier.final$
-                  ..assignment = Code("\"$key\""),
+                  ..assignment = literalString(key).code,
               ))
           .toList()),
   );
