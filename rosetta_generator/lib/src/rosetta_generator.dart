@@ -11,6 +11,8 @@ import 'package:recase/recase.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:rosetta/rosetta.dart';
 
+part 'rosetta_consts.dart';
+
 part 'rosetta_helper.dart';
 
 part 'rosetta_utils.dart';
