@@ -3,6 +3,12 @@ part of 'rosetta_generator.dart';
 Class generateHelper(Element element, String path, List<String> keys) {
   return Class(
     (b) => b
+      ..docs.addAll([
+        "/// Loads and allows access to string resources provided by the JSON",
+        "/// for the specified [Locale].",
+        "///",
+        "/// Should be used as a mixin class for [${element.name}].",
+      ])
       ..abstract = true
       ..name = "_\$${element.name}Helper"
       ..fields.add(
@@ -22,6 +28,9 @@ Method generateLoader(String path) {
 
   return Method(
     (mb) => mb
+      ..docs.addAll([
+        "/// Loads and decodes the JSON associated with the given [locale].",
+      ])
       ..name = _loadMethodName
       ..returns = _futureOf("void")
       ..modifier = MethodModifier.async
@@ -50,6 +59,9 @@ Method generateLoader(String path) {
 Method generateTranslationMethod() {
   return Method(
     (mb) => mb
+      ..docs.addAll([
+        "/// Returns the requested string resource associated with the given [key].",
+      ])
       ..name = _translateMethodName
       ..lambda = true
       ..requiredParameters.add(
