@@ -51,6 +51,7 @@ stages:
 branches:
   only:
     - master
+    - development
 
 cache:
   directories:
