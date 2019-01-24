@@ -1,3 +1,3 @@
-# Initial version
+# First release version
 
-Basic functionality implemented. Features are on the way.
+Add `@Stone` annotation and documentation.
