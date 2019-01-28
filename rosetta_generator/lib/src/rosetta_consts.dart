@@ -18,6 +18,8 @@ const Reference jsonStr = Reference(_loadJsonStr);
 const Reference jsonMap = Reference(_loadJsonMap);
 const Reference key = Reference(_keyName);
 
+final TypeChecker _interceptorTypeChecker = TypeChecker.fromRuntime(Intercept);
+
 final Parameter localeParameter = Parameter((pb) => pb
   ..name = _localeName
   ..type = _typeOf('Locale'));

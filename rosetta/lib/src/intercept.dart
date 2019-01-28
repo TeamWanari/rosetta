@@ -22,7 +22,7 @@ class Intercept {
   /// If the annotated method declares parameters, then all the getter methods
   /// will be replaced by normal methods, which will have a parameter list
   /// matching the interceptor's parameters.
-  factory Intercept.simple() => Intercept._();
+  const Intercept.simple() : filter = null;
 
   /// Declares the annotated method as a conditional interceptor, which will be
   /// applied to all getter methods generated for the provided translations,
@@ -37,5 +37,5 @@ class Intercept {
   /// related getter methods will be replaced by normal methods, which will
   /// have a parameter list matching the interceptor's parameters with the
   /// exception of the first [String] parameter.
-  factory Intercept.withFilter({String filter}) => Intercept._(filter: filter);
+  const Intercept.withFilter({this.filter});
 }

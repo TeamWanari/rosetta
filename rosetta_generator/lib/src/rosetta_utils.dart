@@ -8,7 +8,7 @@ Future<List<String>> getLanguages(String path) async {
   if (exists) {
     List<FileSystemEntity> entries =
         await directory.list(recursive: false, followLinks: true).toList();
-    List<String> fileNames = List();
+    List<String> fileNames = <String>[];
 
     for (FileSystemEntity entry in entries) {
       if (entry is File) fileNames.add(basename(entry.path));
@@ -16,7 +16,7 @@ Future<List<String>> getLanguages(String path) async {
     return fileNames.map((name) => name.replaceAll(".json", "")).toList();
   }
 
-  return List(0);
+  return <String>[];
 }
 
 Future<List<String>> getKeys(String path, String name) async {
@@ -29,8 +29,74 @@ Future<List<String>> getKeys(String path, String name) async {
     return _result.keys.toList();
   }
 
-  return List(0);
+  return <String>[];
 }
+
+Future<Map<String, List<String>>> getKeyMap(String path) async {
+  Directory directory = Directory(path);
+
+  Map<String, List<String>> keyMap = Map();
+
+  for (FileSystemEntity entity in directory.listSync()) {
+    File file = File(entity.path);
+    Map<String, dynamic> jsonMap = json.decode(await file.readAsString());
+    Map<String, String> translationMap = jsonMap
+        .map<String, String>((key, value) => MapEntry(key, value as String));
+
+    translationMap.forEach((key, value) {
+      var translations = keyMap.putIfAbsent(key, () => <String>[]);
+      translations.add(value);
+      keyMap[key] = translations;
+    });
+  }
+
+  return keyMap;
+}
+
+Map<MethodElement, List<String>> sortKeysByInterceptors(
+  Map<String, List<String>> keyMap,
+  List<MethodElement> interceptors,
+) {
+  Map<String, List<String>> remainingKeyMap = Map.of(keyMap);
+
+  return Map.fromIterable(
+    interceptors,
+    key: (interceptor) => interceptor,
+    value: (interceptor) {
+      var annotation =
+          _interceptorTypeChecker.firstAnnotationOfExact(interceptor);
+      var matchingKeys = <String>[];
+      var filter = annotation.getField("filter").toStringValue();
+
+      if (filter != null) {
+        /// [Intercept] annotation with filter
+        var filterRegex = RegExp(filter);
+
+        remainingKeyMap.forEach((key, values) {
+          if (values.where(filterRegex.hasMatch).toList().isNotEmpty) {
+            matchingKeys.add(key);
+          }
+        });
+
+        matchingKeys.forEach(remainingKeyMap.remove);
+      } else {
+        /// [Intercept] annotation without filter
+        matchingKeys.addAll(remainingKeyMap.keys);
+        remainingKeyMap.clear();
+      }
+
+      return matchingKeys;
+    },
+  )
+
+    /// Add the remaining keys as
+    ..[null] = remainingKeyMap.keys.toList();
+}
+
+List<MethodElement> getInterceptors(ClassElement classElement) =>
+    classElement.methods
+        .where((m) => _interceptorTypeChecker.hasAnnotationOfExact(m))
+        .toList();
 
 Reference _localizationDelegateOf(String className) => TypeReference(
       (trb) => trb

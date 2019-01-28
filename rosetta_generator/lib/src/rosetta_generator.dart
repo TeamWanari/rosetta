@@ -32,15 +32,17 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
         .getField("path")
         .toStringValue();
 
+    var className = element.name;
     var languages = await getLanguages(path);
-    var keys = await getKeys(path, languages[0]);
+    var keyMap = await getKeyMap(path);
+    var interceptors = getInterceptors(element as ClassElement);
 
     final file = Library(
       (lb) => lb
         ..body.addAll([
-          generateDelegate(element.name, languages),
-          generateKeysClass(keys),
-          generateHelper(element, path, keys),
+          generateDelegate(className, languages),
+          generateKeysClass(keyMap.keys.toList()),
+          generateHelper(className, path, keyMap, interceptors),
         ]),
     );
 
