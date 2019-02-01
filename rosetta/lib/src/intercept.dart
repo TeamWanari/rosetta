@@ -9,9 +9,11 @@ class Intercept {
   ///
   /// (Optional)
   final String filter;
+  final bool isFiltered;
 
   const Intercept._({
     this.filter,
+    this.isFiltered,
   });
 
   /// Declares the annotated method as a simple interceptor, which will be
@@ -22,7 +24,9 @@ class Intercept {
   /// If the annotated method declares parameters, then all the getter methods
   /// will be replaced by normal methods, which will have a parameter list
   /// matching the interceptor's parameters.
-  const Intercept.simple() : filter = null;
+  const Intercept.simple()
+      : filter = null,
+        isFiltered = false;
 
   /// Declares the annotated method as a conditional interceptor, which will be
   /// applied to all getter methods generated for the provided translations,
@@ -37,5 +41,5 @@ class Intercept {
   /// related getter methods will be replaced by normal methods, which will
   /// have a parameter list matching the interceptor's parameters with the
   /// exception of the first [String] parameter.
-  const Intercept.withFilter({this.filter});
+  const Intercept.withFilter({this.filter}) : isFiltered = true;
 }
