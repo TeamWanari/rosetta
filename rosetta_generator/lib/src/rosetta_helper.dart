@@ -131,7 +131,7 @@ List<Method> generateSimpleGetterMethods(List<String> keys) {
 List<Method> generateInterceptedMethods(
     MethodElement interceptor, List<String> keys) {
   if (interceptor.parameters.length == 1) {
-    return generateSimpleInterceptedMethods(refer(interceptor.name), keys);
+    return generateSimpleInterceptedMethods(interceptor, keys);
   } else if (interceptor.parameters.length > 1) {
     return generateParametrizedInterceptedMethods(interceptor, keys);
   }
@@ -139,7 +139,7 @@ List<Method> generateInterceptedMethods(
 }
 
 List<Method> generateSimpleInterceptedMethods(
-    Reference interceptor, List<String> keys) {
+    MethodElement interceptor, List<String> keys) {
   bool isFirstMethod = true;
 
   return keys
@@ -152,12 +152,12 @@ List<Method> generateSimpleInterceptedMethods(
                   if (isFirstMethod) {
                     isFirstMethod = false;
                     m.docs.addAll([
-                      "/// Simple getter methods for [${interceptor.code.toString()}] interceptor."
+                      "/// Simple getter methods for [${interceptor.name}] interceptor."
                     ]);
                   }
                 })
                 ..lambda = true
-                ..body = interceptor.call([
+                ..body = refer(interceptor.name).call([
                   translate.call([
                     refer(_keysClassName).property(ReCase(key).camelCase),
                   ]),
