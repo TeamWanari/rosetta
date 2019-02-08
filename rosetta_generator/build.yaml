@@ -9,7 +9,10 @@ builders:
     target: ":rosetta_generator"
     import: "package:rosetta_generator/rosetta_generator.dart"
     builder_factories: ["rosettaStoneBuilder"]
-    build_extensions: {".dart": [".rosetta.g.part"]}
+    build_extensions: {
+      ".dart": [".rosetta.g.part"],
+      ".json": [".rosetta.json"]
+    }
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]

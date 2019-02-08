@@ -13,14 +13,13 @@ Future<List<String>> getLanguages(String path) async {
   return fileNames.map((name) => name.replaceAll(".json", "")).toList();
 }
 
-Future<Map<String, List<String>>> getKeyMap(String path) async {
-  Directory directory = Directory(path);
-
+Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
   Map<String, List<String>> keyMap = Map();
 
-  for (FileSystemEntity entity in directory.listSync()) {
-    File file = File(entity.path);
-    Map<String, dynamic> jsonMap = json.decode(await file.readAsString());
+  var assets = await step.findAssets(Glob(path, recursive: true)).toList();
+
+  for (var entity in assets) {
+    Map<String, dynamic> jsonMap = json.decode(await step.readAsString(entity));
     Map<String, String> translationMap = jsonMap
         .map<String, String>((key, value) => MapEntry(key, value as String));
 

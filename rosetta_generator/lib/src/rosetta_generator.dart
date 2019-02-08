@@ -6,6 +6,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:glob/glob.dart';
 import 'package:path/path.dart' show basename;
 import 'package:recase/recase.dart';
 import 'package:rosetta/rosetta.dart';
@@ -43,7 +44,7 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
     Map<String, List<String>> keyMap;
 
     try {
-      keyMap = await getKeyMap(path);
+      keyMap = await getKeyMap(buildStep, path);
     } on FormatException catch (_) {
       throw InvalidGenerationSourceError(
         "Invalid JSON format! Validate the JSON's contents.",
