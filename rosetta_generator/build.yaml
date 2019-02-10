@@ -11,7 +11,7 @@ builders:
     builder_factories: ["rosettaStoneBuilder"]
     build_extensions: {
       ".dart": [".rosetta.g.part"],
-      ".json": [".rosetta.json"]
+      ".json": [".rosetta.json"],
     }
     auto_apply: dependents
     build_to: cache

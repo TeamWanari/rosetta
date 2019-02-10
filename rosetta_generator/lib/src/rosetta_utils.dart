@@ -13,24 +13,28 @@ Future<List<String>> getLanguages(String path) async {
   return fileNames.map((name) => name.replaceAll(".json", "")).toList();
 }
 
+/// All translations grouped by their keys
 Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
-  Map<String, List<String>> keyMap = Map();
+  var mapping = <String, List<String>>{};
 
+  /// Find all referenced translation files for [Stone.path]
   var assets = await step.findAssets(Glob(path, recursive: true)).toList();
 
+  /// Parse all translations
   for (var entity in assets) {
     Map<String, dynamic> jsonMap = json.decode(await step.readAsString(entity));
     Map<String, String> translationMap = jsonMap
         .map<String, String>((key, value) => MapEntry(key, value as String));
 
-    translationMap.forEach((key, value) {
-      var translations = keyMap[key] ?? <String>[];
-      translations.add(value);
-      keyMap[key] = translations;
-    });
+    /// Group translations by key
+    translationMap.forEach(
+      (key, value) => (mapping[key] ??= <String>[]).add(value),
+    );
   }
 
-  return keyMap;
+  print(mapping.toString());
+
+  return mapping;
 }
 
 Map<MethodElement, List<String>> sortKeysByInterceptors(

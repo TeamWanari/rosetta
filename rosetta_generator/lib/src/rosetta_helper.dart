@@ -8,7 +8,7 @@ Class generateHelper(String className, String path,
         "/// Loads and allows access to string resources provided by the JSON",
         "/// for the specified [Locale].",
         "///",
-        "/// Should be used as a mixin class for [$className}].",
+        "/// Should be used as an abstract or mixin class for [$className].",
       ])
       ..abstract = true
       ..name = "_\$${className}Helper"
