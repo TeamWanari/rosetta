@@ -189,3 +189,47 @@ abstract class _$TranslationHelper {
   String get seeYouSoon => _translate(_$Keys.seeYouSoon);
 }
 ```
+
+## Interceptors
+
+In most cases we will end up with some kind of parametrization in some of our resouces, like displaying currencies, amount, etc... This is where interceptors can help us.
+
+We can define our interceptor logic in `@Stone` annotated classes using `@Intercept` annotations. The annotation has two variants `@Intecept.simple()`, which describes interceptor logic for all resources, and `@Intercept.withFilter(filter)`, which provides custom logic for resources matching the provided filter pattern. 
+
+The below example shows our previous `Translations` class with interceptors.
+
+```dart
+@Stone(path: 'i18n')
+class Translation with _$TranslationHelper { // Generated mixin class or you can extend it also
+  static LocalizationsDelegate<Translation> delegate = _$TranslationDelegate(); // Generated delegate
+
+  static Translation of(BuildContext context) {
+    return Localizations.of(context, Translation);
+  }
+  
+  @Intercept.withFilter(filter: r'%(?:(\d+)\$)?([\+\-\#0 ]*)(\d+|\*)?(?:\.(\d+|\*))?([a-z%])')
+  String paramIntercept(String translation, var args) => sprintf(translation, args);
+
+  
+  @Intercept.simple()
+  String simpleIntercept(String translation) => ">>> $translation";  
+}
+```
+
+The current generator logic doesn't support interceptor cascades, so only one interceptor will be applied to one tranlsation key. The logic always picks up the first matching interceptor for a key. If there's no matching interceptor it falls back to the original getter logic (simply returns what's defined in the JSON).
+
+So, in the above example, if we have a key, which has atleast one matching translation for the provided filter, then the `paramIntercept` interceptor will be used, otherwise the `simpleIntercept` which is applied to all (remaining) keys.
+
+The interceptor function must return `String` and also has to declare a `String` parameter as it's first parameter. After the first parameter you can declare other parameters if you like, but keep in mind, that all accessors generated for the matching keys will have the same parameters as the tailing ones following the first string input.
+
+The interceptors in the examples will produce accessor methods like below:
+
+```dart
+String get helloLabel => simpleIntercept(_translate(_$Keys.helloLabel));
+```
+and
+```dart
+String helloLabel(var args) => paramIntercept(_translate(_$Keys.helloLabel), args);
+```
+
+If we swap the two interceptors then the `simpleIntercept` method will be applied to all keys, because it matches any. And the filtering one will be applied to the remaining ones (which is an empty set of keys).
