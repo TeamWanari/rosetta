@@ -1,3 +1,8 @@
+# v0.1.2
+
+## Improvements:
+* Add generator logic for `Stone.package` attribute to enabled support for multi-package projects.
+
 # v0.1.1
 
 ## Improvements:

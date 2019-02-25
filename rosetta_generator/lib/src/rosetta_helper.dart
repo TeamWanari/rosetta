@@ -1,45 +1,51 @@
 part of 'rosetta_generator.dart';
 
-Class generateHelper(String className, String path,
-    Map<String, List<String>> keyMap, List<MethodElement> interceptors) {
-  return Class(
-    (b) => b
-      ..docs.addAll([
-        "/// Loads and allows access to string resources provided by the JSON",
-        "/// for the specified [Locale].",
-        "///",
-        "/// Should be used as an abstract or mixin class for [$className].",
-      ])
-      ..abstract = true
-      ..name = "_\$${className}Helper"
-      ..fields.add(
-        Field((fb) => fb
-          ..name = _translationsFieldName
-          ..type = _mapOf(stringType, stringType)),
-      )
-      ..methods.add(generateLoader(path))
-      ..methods.add(generateTranslationMethod())
-      ..methods.update((methods) {
-        if (interceptors.isEmpty) {
-          methods.addAll(generateSimpleGetterMethods(keyMap.keys.toList()));
-        } else {
-          methods.addAll(generateInterceptorMethods(interceptors));
+Class generateHelper(
+  String className,
+  Stone stone,
+  Map<String, List<String>> keyMap,
+  List<MethodElement> interceptors,
+) =>
+    Class(
+      (b) => b
+        ..docs.addAll([
+          "/// Loads and allows access to string resources provided by the JSON",
+          "/// for the specified [Locale].",
+          "///",
+          "/// Should be used as an abstract or mixin class for [$className].",
+        ])
+        ..abstract = true
+        ..name = "_\$${className}Helper"
+        ..fields.add(
+          Field((fb) => fb
+            ..name = _translationsFieldName
+            ..type = _mapOf(stringType, stringType)),
+        )
+        ..methods.add(generateLoader(stone))
+        ..methods.add(generateTranslationMethod())
+        ..methods.update((methods) {
+          if (interceptors.isEmpty) {
+            methods.addAll(generateSimpleGetterMethods(keyMap.keys.toList()));
+          } else {
+            methods.addAll(generateInterceptorMethods(interceptors));
 
-          sortKeysByInterceptors(keyMap, interceptors).forEach((method, keys) {
-            if (method != null) {
-              methods.addAll(generateInterceptedMethods(method, keys));
-            } else {
-              methods.addAll(generateSimpleGetterMethods(keys));
-            }
-          });
-        }
-      }),
-  );
-}
+            sortKeysByInterceptors(keyMap, interceptors)
+                .forEach((method, keys) {
+              if (method != null) {
+                methods.addAll(generateInterceptedMethods(method, keys));
+              } else {
+                methods.addAll(generateSimpleGetterMethods(keys));
+              }
+            });
+          }
+        }),
+    );
 
-Method generateLoader(String path) {
+Method generateLoader(Stone stone) {
   var assetLoader = refer("rootBundle").property("loadString");
   var decodeJson = refer("json").property("decode");
+  var assetLoaderTemplate =
+      "${_stoneAssetsPath(stone)}/\${$_localeName.languageCode}.json";
 
   return Method(
     (mb) => mb
@@ -52,7 +58,7 @@ Method generateLoader(String path) {
       ..requiredParameters.add(localeParameter)
       ..body = Block.of([
         assetLoader
-            .call([literalString("$path/\${$_localeName.languageCode}.json")])
+            .call([literalString(assetLoaderTemplate)])
             .awaited
             .assignVar(_loadJsonStr)
             .statement,
@@ -71,24 +77,22 @@ Method generateLoader(String path) {
   );
 }
 
-Method generateTranslationMethod() {
-  return Method(
-    (mb) => mb
-      ..docs.addAll([
-        "/// Returns the requested string resource associated with the given [key].",
-      ])
-      ..name = _translateMethodName
-      ..lambda = true
-      ..requiredParameters.add(
-        Parameter((pb) => pb
-          ..name = _keyName
-          ..named = true
-          ..type = stringType),
-      )
-      ..body = translations.index(key).code
-      ..returns = stringType,
-  );
-}
+Method generateTranslationMethod() => Method(
+      (mb) => mb
+        ..docs.addAll([
+          "/// Returns the requested string resource associated with the given [key].",
+        ])
+        ..name = _translateMethodName
+        ..lambda = true
+        ..requiredParameters.add(
+          Parameter((pb) => pb
+            ..name = _keyName
+            ..named = true
+            ..type = stringType),
+        )
+        ..body = translations.index(key).code
+        ..returns = stringType,
+    );
 
 List<Method> generateInterceptorMethods(List<MethodElement> methods) => methods
     .map((me) => Method((mb) => mb
