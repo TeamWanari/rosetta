@@ -8,21 +8,16 @@ void checkElementIsClass(Element element) {
   }
 }
 
-void checkDirectoryExists(String path) async {
-  bool exists = await Directory(path).exists();
-
-  if (!exists) {
-    throw InvalidGenerationSourceError(
-      "Given path doesn't exist! Provide a valid path.",
-    );
-  }
-}
-
 void checkTranslationKeyMap(Map<String, List<String>> keyMap) {
+  if (keyMap.isEmpty) {
+    return;
+  }
+
   var ascendingKeyLengths = keyMap
       .map((string, list) => MapEntry(string, list.length))
       .entries
       .toList();
+
   ascendingKeyLengths.sort((entry1, entry2) => entry2.value - entry1.value);
 
   int requiredLength = ascendingKeyLengths.first.value;

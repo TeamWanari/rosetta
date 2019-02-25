@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:glob/glob.dart';
-import 'package:path/path.dart' show basename;
 import 'package:recase/recase.dart';
 import 'package:rosetta/rosetta.dart';
 import 'package:source_gen/source_gen.dart';
@@ -32,19 +30,15 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
       Element element, ConstantReader annotation, BuildStep buildStep) async {
     checkElementIsClass(element);
 
-    String path = element.metadata.first
-        .computeConstantValue()
-        .getField("path")
-        .toStringValue();
-
-    await checkDirectoryExists(path);
+    Stone stone = parseStone(annotation);
 
     var className = element.name;
-    var languages = await getLanguages(path);
+    var languages = await getLanguages(buildStep, stone.path);
+
     Map<String, List<String>> keyMap;
 
     try {
-      keyMap = await getKeyMap(buildStep, path);
+      keyMap = await getKeyMap(buildStep, stone.path);
     } on FormatException catch (_) {
       throw InvalidGenerationSourceError(
         "Invalid JSON format! Validate the JSON's contents.",
@@ -62,7 +56,7 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
         ..body.addAll([
           generateDelegate(className, languages),
           generateKeysClass(keyMap.keys.toList()),
-          generateHelper(className, path, keyMap, interceptors),
+          generateHelper(className, stone, keyMap, interceptors),
         ]),
     );
 

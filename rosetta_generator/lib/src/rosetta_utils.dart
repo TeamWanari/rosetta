@@ -1,17 +1,16 @@
 part of 'rosetta_generator.dart';
 
-Future<List<String>> getLanguages(String path) async {
-  Directory directory = Directory(path);
+Stone parseStone(ConstantReader annotation) => Stone(
+      path: annotation.peek("path")?.stringValue,
+      package: annotation.peek("package")?.stringValue,
+    );
 
-  List<FileSystemEntity> entries =
-      await directory.list(recursive: false, followLinks: true).toList();
-  List<String> fileNames = <String>[];
-
-  for (FileSystemEntity entry in entries) {
-    if (entry is File) fileNames.add(basename(entry.path));
-  }
-  return fileNames.map((name) => name.replaceAll(".json", "")).toList();
-}
+/// Find all referenced translation files for [Stone.path]
+Future<List<String>> getLanguages(BuildStep step, String path) async =>
+    await step
+        .findAssets(Glob(path, recursive: true))
+        .map(_assetIdToLocaleId)
+        .toList();
 
 /// All translations grouped by their keys
 Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
@@ -31,8 +30,6 @@ Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
       (key, value) => (mapping[key] ??= <String>[]).add(value),
     );
   }
-
-  print(mapping.toString());
 
   return mapping;
 }
@@ -81,6 +78,13 @@ List<MethodElement> getInterceptors(ClassElement classElement) =>
     classElement.methods
         .where((m) => _interceptorTypeChecker.hasAnnotationOfExact(m))
         .toList();
+
+String _assetIdToLocaleId(AssetId assetId) =>
+    assetId.uri.pathSegments.last.split(".").first;
+
+String _stoneAssetsPath(Stone stone) => stone.package != null
+    ? "packages/${stone.package}/${stone.path}"
+    : stone.path;
 
 Reference _localizationDelegateOf(String className) => TypeReference(
       (trb) => trb
