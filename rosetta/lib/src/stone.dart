@@ -12,7 +12,7 @@ class Stone {
   ///
   /// In multi-package Flutter projects, if you declare a [Stone]
   /// annotated class, which uses JSON assets from a package other
-  /// then the root package, you must declare the resource's host
+  /// than the root package, you must declare the resource's host
   /// package or the Localization library will try to load your
   /// JSON assets from the root bundle.
   final String package;
