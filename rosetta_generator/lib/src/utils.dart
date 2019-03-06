@@ -1,9 +1,11 @@
-part of 'rosetta_generator.dart';
+part of 'generator.dart';
 
 Stone parseStone(ConstantReader annotation) => Stone(
       path: annotation.peek("path")?.stringValue,
       package: annotation.peek("package")?.stringValue,
     );
+
+//TODO: getLanguage+getKayMap merge => Localization Class (language keys, key)
 
 /// Find all referenced translation files for [Stone.path]
 Future<List<String>> getLanguages(BuildStep step, String path) async =>
@@ -13,7 +15,7 @@ Future<List<String>> getLanguages(BuildStep step, String path) async =>
         .toList();
 
 /// All translations grouped by their keys
-Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
+Future<List<Translation>> getKeyMap(BuildStep step, String path) async {
   var mapping = <String, List<String>>{};
 
   /// Find all referenced translation files for [Stone.path]
@@ -31,39 +33,41 @@ Future<Map<String, List<String>>> getKeyMap(BuildStep step, String path) async {
     );
   }
 
-  return mapping;
+  /// Convert the map to translation objects
+  var translations = List<Translation>();
+  mapping.forEach((id, trans) => translations.add(
+        Translation(key: id, translations: trans),
+      ));
+
+  return translations;
 }
 
 Map<MethodElement, List<String>> sortKeysByInterceptors(
-  Map<String, List<String>> keyMap,
-  List<MethodElement> interceptors,
+  List<Translation> translations,
+  List<Interceptor> interceptors,
 ) {
-  Map<String, List<String>> remainingKeyMap = Map.of(keyMap);
+  List<Translation> remainingTranslations = List.of(translations);
 
   return Map.fromIterable(
     interceptors,
-    key: (interceptor) => interceptor,
+    key: (interceptor) => interceptor.element,
     value: (interceptor) {
-      var annotation =
-          _interceptorTypeChecker.firstAnnotationOfExact(interceptor);
       var matchingKeys = <String>[];
-      var filter = annotation.getField("filter").toStringValue();
+      var filter = interceptor.filter;
 
       if (filter != null) {
         /// [Intercept] annotation with filter
-        var filterRegex = RegExp(filter);
-
-        remainingKeyMap.forEach((key, values) {
-          if (values.where(filterRegex.hasMatch).toList().isNotEmpty) {
-            matchingKeys.add(key);
+        remainingTranslations.forEach((trans) {
+          if (trans.translations.where(filter.hasMatch).toList().isNotEmpty) {
+            matchingKeys.add(trans.key);
           }
         });
 
-        matchingKeys.forEach(remainingKeyMap.remove);
+        matchingKeys.forEach(remainingTranslations.remove);
       } else {
         /// [Intercept] annotation without filter
-        matchingKeys.addAll(remainingKeyMap.keys);
-        remainingKeyMap.clear();
+        matchingKeys.addAll(keysOf(remainingTranslations));
+        remainingTranslations.clear();
       }
 
       return matchingKeys;
@@ -71,16 +75,17 @@ Map<MethodElement, List<String>> sortKeysByInterceptors(
   )
 
     /// Add the remaining keys as
-    ..[null] = remainingKeyMap.keys.toList();
+    ..[null] = keysOf(remainingTranslations);
 }
 
-List<MethodElement> getInterceptors(ClassElement classElement) =>
+List<Interceptor> getInterceptors(ClassElement classElement) =>
     classElement.methods
         .where((m) => _interceptorTypeChecker.hasAnnotationOfExact(m))
+        .map((element) => Interceptor(element: element))
         .toList();
 
 String _assetIdToLocaleId(AssetId assetId) =>
-    assetId.uri.pathSegments.last.split(".").first;
+    assetId.uri.pathSegments.last.split(_keyDividerChar).first;
 
 String _stoneAssetsPath(Stone stone) => stone.package != null
     ? "packages/${stone.package}/${stone.path}"

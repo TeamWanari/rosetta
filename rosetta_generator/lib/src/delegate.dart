@@ -1,4 +1,4 @@
-part of 'rosetta_generator.dart';
+part of 'generator.dart';
 
 Class generateDelegate(String className, List<String> languages) {
   var delegateClassName = "${className}Delegate";

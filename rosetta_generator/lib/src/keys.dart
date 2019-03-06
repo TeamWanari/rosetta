@@ -1,18 +1,18 @@
-part of 'rosetta_generator.dart';
+part of 'generator.dart';
 
-Class generateKeysClass(List<String> keys) {
+Class generateKeysClass(List<Translation> translations) {
   return Class(
     (cb) => cb
       ..docs.add("/// Contains the keys read from the JSON")
       ..name = _keysClassName
-      ..fields.addAll(keys
-          .map((key) => Field(
+      ..fields.addAll(translations
+          .map((translation) => Field(
                 (fb) => fb
-                  ..name = ReCase(key).camelCase
+                  ..name = translation.keyVariable
                   ..type = stringType
                   ..static = true
                   ..modifier = FieldModifier.final$
-                  ..assignment = literalString(key).code,
+                  ..assignment = literalString(translation.key).code,
               ))
           .toList()),
   );
