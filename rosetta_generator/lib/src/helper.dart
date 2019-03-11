@@ -6,7 +6,13 @@ List<Class> generateHelper(
   List<Translation> translations,
   List<Interceptor> interceptors,
 ) {
-  List<Class> classList = [];
+  TranslationTree tree = TranslationTree();
+  tree.build(translations);
+
+  Visitor visitor = TranslationVisitor(
+      interceptors: interceptors, helperRef: refer("_\$${className}Helper"));
+  TranslationProduct product = tree.visit(visitor);
+
   var helper = Class(
     (b) => b
       ..docs.addAll([
@@ -29,11 +35,8 @@ List<Class> generateHelper(
           cb.methods.addAll(generateInterceptorMethods(interceptors));
         }
 
-        Tree tree = Tree();
-        var childMethods = tree.generateMethods(translations, interceptors,
-            classList, refer("_\$${className}Helper"));
-        cb.methods.addAll(childMethods);
-        cb.fields.addAll(childMethods
+        cb.methods.addAll(product.helperMethods);
+        cb.fields.addAll(product.helperMethods
             .where((child) => child.returns != stringType)
             .map((child) => Field((fieldBuilder) => fieldBuilder
               ..name = "_${child.name}"
@@ -42,7 +45,7 @@ List<Class> generateHelper(
       }),
   );
 
-  return [helper] + classList;
+  return [helper] + product.translationClasses;
 }
 
 Method generateLoader(Stone stone) {

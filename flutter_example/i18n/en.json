@@ -1,4 +1,7 @@
 {
-    "hello_there": "Hello there!",
-    "see_you_soon": "See you soon!"
+  "hello_there": "Hello there!",
+  "see_you_soon": "See you soon!",
+  "see.you.soon": "See You Soon!",
+  "see.you.later": "See You Later!",
+  "see.saw": "See Saw!"
 }

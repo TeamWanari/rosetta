@@ -22,9 +22,19 @@ part 'helper.dart';
 
 part 'keys.dart';
 
-part 'tree/node.dart';
+part 'tree/abstract/node.dart';
 
-part 'tree/tree.dart';
+part 'tree/abstract/tree.dart';
+
+part 'tree/abstract/visitor.dart';
+
+part 'tree/implementation/node.dart';
+
+part 'tree/implementation/product.dart';
+
+part 'tree/implementation/tree.dart';
+
+part 'tree/implementation/visitor.dart';
 
 part 'utils.dart';
 

@@ -1,8 +1,13 @@
 part of 'generator.dart';
 
-Stone parseStone(ConstantReader annotation) => Stone(
-      path: annotation.peek("path")?.stringValue,
-      package: annotation.peek("package")?.stringValue,
+Stone parseStone(ConstantReader annotation) =>
+    Stone(
+      path: annotation
+          .peek("path")
+          ?.stringValue,
+      package: annotation
+          .peek("package")
+          ?.stringValue,
     );
 
 //TODO: getLanguage+getKayMap merge => Localization Class (language keys, key)
@@ -29,13 +34,14 @@ Future<List<Translation>> getKeyMap(BuildStep step, String path) async {
 
     /// Group translations by key
     translationMap.forEach(
-      (key, value) => (mapping[key] ??= <String>[]).add(value),
+          (key, value) => (mapping[key] ??= <String>[]).add(value),
     );
   }
 
   /// Convert the map to translation objects
   var translations = List<Translation>();
-  mapping.forEach((id, trans) => translations.add(
+  mapping.forEach((id, trans) =>
+      translations.add(
         Translation(key: id, translations: trans),
       ));
 
@@ -43,9 +49,8 @@ Future<List<Translation>> getKeyMap(BuildStep step, String path) async {
 }
 
 Map<MethodElement, List<String>> sortKeysByInterceptors(
-  List<Translation> translations,
-  List<Interceptor> interceptors,
-) {
+    List<Translation> translations,
+    List<Interceptor> interceptors,) {
   List<Translation> remainingTranslations = List.of(translations);
 
   return Map.fromIterable(
@@ -58,7 +63,10 @@ Map<MethodElement, List<String>> sortKeysByInterceptors(
       if (filter != null) {
         /// [Intercept] annotation with filter
         remainingTranslations.forEach((trans) {
-          if (trans.translations.where(filter.hasMatch).toList().isNotEmpty) {
+          if (trans.translations
+              .where(filter.hasMatch)
+              .toList()
+              .isNotEmpty) {
             matchingKeys.add(trans.key);
           }
         });
@@ -74,7 +82,7 @@ Map<MethodElement, List<String>> sortKeysByInterceptors(
     },
   )
 
-    /// Add the remaining keys as
+  /// Add the remaining keys as
     ..[null] = keysOf(remainingTranslations);
 }
 
@@ -85,46 +93,60 @@ List<Interceptor> getInterceptors(ClassElement classElement) =>
         .toList();
 
 String _assetIdToLocaleId(AssetId assetId) =>
-    assetId.uri.pathSegments.last.split(_keyDividerChar).first;
+    assetId.uri.pathSegments.last
+        .split(_keyDividerChar)
+        .first;
 
-String _stoneAssetsPath(Stone stone) => stone.package != null
-    ? "packages/${stone.package}/${stone.path}"
-    : stone.path;
+String _stoneAssetsPath(Stone stone) =>
+    stone.package != null
+        ? "packages/${stone.package}/${stone.path}"
+        : stone.path;
 
-Reference _localizationDelegateOf(String className) => TypeReference(
-      (trb) => trb
+Reference _localizationDelegateOf(String className) =>
+    TypeReference(
+          (trb) =>
+      trb
         ..symbol = "LocalizationsDelegate"
         ..types.add(_typeOf(className)),
     );
 
-Reference _futureOf(String className) => TypeReference(
-      (trb) => trb
+Reference _futureOf(String className) =>
+    TypeReference(
+          (trb) =>
+      trb
         ..symbol = "Future"
         ..types.add(_typeOf(className)),
     );
 
-Reference _typeOf(String className) => TypeReference(
-      (trb) => trb..symbol = className,
+Reference _typeOf(String className) =>
+    TypeReference(
+          (trb) => trb..symbol = className,
     );
 
-Reference _mapOf(Reference keyType, Reference valueType) => TypeReference(
-      (trb) => trb
+Reference _mapOf(Reference keyType, Reference valueType) =>
+    TypeReference(
+          (trb) =>
+      trb
         ..symbol = "Map"
         ..types.addAll([keyType, valueType]),
     );
 
-Reference get boolType => TypeReference(
-      (trb) => trb..symbol = "bool",
+Reference get boolType =>
+    TypeReference(
+          (trb) => trb..symbol = "bool",
     );
 
-Reference get dynamicType => TypeReference(
-      (trb) => trb..symbol = "dynamic",
+Reference get dynamicType =>
+    TypeReference(
+          (trb) => trb..symbol = "dynamic",
     );
 
-Reference get stringType => TypeReference(
-      (trb) => trb..symbol = "String",
+Reference get stringType =>
+    TypeReference(
+          (trb) => trb..symbol = "String",
     );
 
-Reference get localeType => TypeReference(
-      (trb) => trb..symbol = "Locale",
+Reference get localeType =>
+    TypeReference(
+          (trb) => trb..symbol = "Locale",
     );
