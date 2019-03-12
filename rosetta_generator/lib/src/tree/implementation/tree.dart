@@ -1,4 +1,8 @@
-part of '../../generator.dart';
+import 'package:rosetta_generator/src/entities/translation.dart';
+import 'package:rosetta_generator/src/tree/abstract/tree.dart';
+import 'package:rosetta_generator/src/tree/abstract/visitor.dart';
+import 'package:rosetta_generator/src/tree/implementation/node.dart';
+import 'package:rosetta_generator/src/tree/implementation/product.dart';
 
 class TranslationTree extends Tree<TranslationProduct, TranslationNode> {
   TranslationNode rootNode;
@@ -11,7 +15,8 @@ class TranslationTree extends Tree<TranslationProduct, TranslationNode> {
   }
 
   @override
-  TranslationProduct visit(Visitor<TranslationProduct, TranslationNode> visitor) {
+  TranslationProduct visit(
+      Visitor<TranslationProduct, TranslationNode> visitor) {
     if (rootNode == null) {
       throw Exception("Tree not generated!");
     }

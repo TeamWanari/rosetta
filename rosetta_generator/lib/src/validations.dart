@@ -1,4 +1,9 @@
-part of 'generator.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:rosetta/rosetta.dart';
+import 'package:rosetta_generator/src/entities/translation.dart';
+import 'package:source_gen/source_gen.dart';
+
+final TypeChecker interceptorTypeChecker = TypeChecker.fromRuntime(Intercept);
 
 void checkElementIsClass(Element element) {
   if (element is! ClassElement) {
@@ -34,7 +39,7 @@ void checkTranslationKeyMap(List<Translation> translations) {
 }
 
 void checkInterceptorFormat(MethodElement element) {
-  var annotation = _interceptorTypeChecker.firstAnnotationOfExact(element);
+  var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
   var isFiltered = annotation.getField("isFiltered").toBoolValue();
 
   if (element.returnType.name != "String") {

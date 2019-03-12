@@ -1,4 +1,11 @@
-part of '../../generator.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:rosetta_generator/src/consts.dart';
+import 'package:rosetta_generator/src/entities/interceptor.dart';
+import 'package:rosetta_generator/src/tree/abstract/node.dart';
+import 'package:rosetta_generator/src/tree/abstract/visitor.dart';
+import 'package:rosetta_generator/src/tree/implementation/node.dart';
+import 'package:rosetta_generator/src/tree/implementation/product.dart';
+import 'package:rosetta_generator/src/utils.dart';
 
 class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   List<Class> classList = [];
@@ -27,7 +34,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
 
   List<Method> _generateClasses(TranslationNode node,
       {String pascalPrefix = ""}) {
-    if (node._isLeaf()) {
+    if (node.isLeaf()) {
       return [_generateLeafMethod(node)];
     } else {
       List<Method> childMethods =
@@ -45,14 +52,14 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   Method _generateNodeMethod(TranslationNode node) {
     return Method(
       (mb) => mb
-        ..name = node._camelName
+        ..name = node.camelName
         ..type = MethodType.getter
         ..lambda = true
-        ..body = refer("_${node._camelName}")
-            .assignNullAware(refer(node._privatePascalPrefixName)
-                .newInstance([node.isInHelper ? _this : innerHelper]))
+        ..body = refer("_${node.camelName}")
+            .assignNullAware(refer(node.privatePascalPrefixName)
+                .newInstance([node.isInHelper ? refThis : refInnerHelper]))
             .code
-        ..returns = refer(node._privatePascalPrefixName),
+        ..returns = refer(node.privatePascalPrefixName),
     );
   }
 
@@ -68,7 +75,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
         matchResults.isNotEmpty ? matchResults.first : null;
 
     return Method((mb) => mb
-      ..name = node._camelName
+      ..name = node.camelName
       ..lambda = true
       ..returns = stringType
       ..update((methodBuilder) {
@@ -89,28 +96,28 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   void _buildGetterMethod(TranslationNode node, MethodBuilder methodBuilder) {
     methodBuilder
       ..type = MethodType.getter
-      ..body = node._helper
-          .property(_translateMethodName)
-          .call([keysClass.property(node.translation.keyVariable)]).code;
+      ..body = node.helper
+          .property(strTranslateMethodName)
+          .call([refKeysClass.property(node.translation.keyVariable)]).code;
   }
 
   void _buildSimpleInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
     methodBuilder
       ..type = MethodType.getter
-      ..body = node._helper.property(interceptor.name).call([
+      ..body = node.helper.property(interceptor.name).call([
         (node.isInHelper
-                ? translate
-                : innerHelper.property(_translateMethodName))
+                ? refTranslate
+                : refInnerHelper.property(strTranslateMethodName))
             .call([
-          refer(_keysClassName).property(node.translation.keyVariable),
+          refer(strKeysClassName).property(node.translation.keyVariable),
         ]),
       ]).code;
   }
 
   void _buildParametrizedInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
-    var interceptorMethod = node._helper.property(interceptor.name);
+    var interceptorMethod = node.helper.property(interceptor.name);
     var methodParameters = interceptor.element.parameters
         .skip(1)
         .map((e) => Parameter((pb) => pb
@@ -131,8 +138,8 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       ..body = interceptorMethod
           .call(
             List()
-              ..add(node._helper.property(_translateMethodName).call([
-                refer(_keysClassName).property(node.translation.keyVariable),
+              ..add(node.helper.property(strTranslateMethodName).call([
+                refer(strKeysClassName).property(node.translation.keyVariable),
               ]))
               ..addAll(internalParameters),
           )
@@ -143,8 +150,8 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       {String pascalPrefix = "", bool parentIsRoot = false}) {
     List<Method> childMethods = [];
     for (Node child in node.children) {
-      List<Method> childFields = _generateClasses(child,
-          pascalPrefix: pascalPrefix + node._pascalName);
+      List<Method> childFields =
+          _generateClasses(child, pascalPrefix: pascalPrefix + node.pascalName);
       if (childFields != null) childMethods.addAll(childFields);
     }
     return childMethods;
@@ -153,17 +160,17 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   Class _generateNodeClass(TranslationNode node, List<Method> childMethods) {
     return Class((classBuilder) {
       classBuilder
-        ..name = node._privatePascalPrefixName
+        ..name = node.privatePascalPrefixName
         ..fields.add(Field((fieldBuilder) => fieldBuilder
           ..modifier = FieldModifier.final$
           ..type = helperRef
-          ..name = _innerHelper))
+          ..name = strInnerHelper))
         ..constructors.add(Constructor((constructorBuilder) =>
             constructorBuilder
               ..requiredParameters
                   .add(Parameter((parameterBuilder) => parameterBuilder
                     ..toThis = true
-                    ..name = _innerHelper))))
+                    ..name = strInnerHelper))))
         ..fields.addAll(childMethods
             .where((child) => child.returns != stringType)
             .map((child) => Field((fieldBuilder) => fieldBuilder

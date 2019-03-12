@@ -1,4 +1,6 @@
-part of '../generator.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:rosetta_generator/src/validations.dart';
 
 class Interceptor {
   MethodElement element;
@@ -18,7 +20,7 @@ class Interceptor {
   Interceptor({this.element}) {
     checkInterceptorFormat(this.element);
 
-    var annotation = _interceptorTypeChecker.firstAnnotationOfExact(element);
+    var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
     String filterString = annotation.getField("filter").toStringValue();
 
     if (filterString != null) {

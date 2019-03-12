@@ -1,44 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:glob/glob.dart';
-import 'package:recase/recase.dart';
 import 'package:rosetta/rosetta.dart';
+import 'package:rosetta_generator/src/delegate.dart';
+import 'package:rosetta_generator/src/entities/translation.dart';
+import 'package:rosetta_generator/src/helper.dart';
+import 'package:rosetta_generator/src/keys.dart';
+import 'package:rosetta_generator/src/utils.dart';
+import 'package:rosetta_generator/src/validations.dart';
 import 'package:source_gen/source_gen.dart';
-
-part 'consts.dart';
-
-part 'delegate.dart';
-
-part 'entities/interceptor.dart';
-
-part 'entities/translation.dart';
-
-part 'helper.dart';
-
-part 'keys.dart';
-
-part 'tree/abstract/node.dart';
-
-part 'tree/abstract/tree.dart';
-
-part 'tree/abstract/visitor.dart';
-
-part 'tree/implementation/node.dart';
-
-part 'tree/implementation/product.dart';
-
-part 'tree/implementation/tree.dart';
-
-part 'tree/implementation/visitor.dart';
-
-part 'utils.dart';
-
-part 'validations.dart';
 
 class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
   const RosettaStoneGenerator();

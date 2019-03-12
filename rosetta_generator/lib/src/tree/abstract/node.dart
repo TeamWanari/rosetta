@@ -1,5 +1,3 @@
-part of '../../generator.dart';
-
 abstract class Node<Content, N extends Node<Content, N>> {
   final List<N> children = [];
   final bool isRoot;

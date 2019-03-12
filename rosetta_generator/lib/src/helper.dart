@@ -1,4 +1,13 @@
-part of 'generator.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:rosetta/rosetta.dart';
+import 'package:rosetta_generator/src/consts.dart';
+import 'package:rosetta_generator/src/entities/interceptor.dart';
+import 'package:rosetta_generator/src/entities/translation.dart';
+import 'package:rosetta_generator/src/tree/abstract/visitor.dart';
+import 'package:rosetta_generator/src/tree/implementation/product.dart';
+import 'package:rosetta_generator/src/tree/implementation/tree.dart';
+import 'package:rosetta_generator/src/tree/implementation/visitor.dart';
+import 'package:rosetta_generator/src/utils.dart';
 
 List<Class> generateHelper(
   String className,
@@ -25,8 +34,8 @@ List<Class> generateHelper(
       ..name = "_\$${className}Helper"
       ..fields.add(
         Field((fb) => fb
-          ..name = _translationsFieldName
-          ..type = _mapOf(stringType, stringType)),
+          ..name = strTranslationsFieldName
+          ..type = mapOf(stringType, stringType)),
       )
       ..methods.add(generateLoader(stone))
       ..methods.add(generateTranslationMethod())
@@ -52,30 +61,30 @@ Method generateLoader(Stone stone) {
   var assetLoader = refer("rootBundle").property("loadString");
   var decodeJson = refer("json").property("decode");
   var assetLoaderTemplate =
-      "${_stoneAssetsPath(stone)}/\${$_localeName.languageCode}.json";
+      "${stoneAssetsPath(stone)}/\${$strLocaleName.languageCode}.json";
 
   return Method(
     (mb) => mb
       ..docs.addAll([
         "/// Loads and decodes the JSON associated with the given [locale].",
       ])
-      ..name = _loadMethodName
-      ..returns = _futureOf("void")
+      ..name = strLoadMethodName
+      ..returns = futureOf("void")
       ..modifier = MethodModifier.async
       ..requiredParameters.add(localeParameter)
       ..body = Block.of([
         assetLoader
             .call([literalString(assetLoaderTemplate)])
             .awaited
-            .assignVar(_loadJsonStr)
+            .assignVar(strLoadJsonStr)
             .statement,
         decodeJson
-            .call([jsonStr])
-            .assignVar(_loadJsonMap, _mapOf(stringType, dynamicType))
+            .call([refJsonStr])
+            .assignVar(strLoadJsonMap, mapOf(stringType, dynamicType))
             .statement,
-        translations
+        refTranslations
             .assign(
-              jsonMap.property("map<String, String>").call([
+              refJsonMap.property("map<String, String>").call([
                 refer("(key, value) => MapEntry(key, value as String)"),
               ]),
             )
@@ -89,15 +98,15 @@ Method generateTranslationMethod() => Method(
         ..docs.addAll([
           "/// Returns the requested string resource associated with the given [key].",
         ])
-        ..name = _translateMethodName
+        ..name = strTranslateMethodName
         ..lambda = true
         ..requiredParameters.add(
           Parameter((pb) => pb
-            ..name = _keyName
+            ..name = strKeyName
             ..named = true
             ..type = stringType),
         )
-        ..body = translations.index(key).code
+        ..body = refTranslations.index(refKey).code
         ..returns = stringType,
     );
 

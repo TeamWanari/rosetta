@@ -1,4 +1,7 @@
-part of 'generator.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:recase/recase.dart';
+import 'package:rosetta_generator/src/consts.dart';
+import 'package:rosetta_generator/src/utils.dart';
 
 Class generateDelegate(String className, List<String> languages) {
   var delegateClassName = "${className}Delegate";
@@ -9,7 +12,7 @@ Class generateDelegate(String className, List<String> languages) {
       "/// [Localizations] widget.",
     ])
     ..name = '_\$$delegateClassName'
-    ..extend = _localizationDelegateOf(className)
+    ..extend = localizationDelegateOf(className)
     ..methods.addAll(_delegateMethods(className, languages)));
 }
 
@@ -24,14 +27,14 @@ Method _isSupported(List<String> supportedLanguages) => Method(
         ..docs.addAll([
           "/// Whether the the given [locale.languageCode] code has a JSON associated with it.",
         ])
-        ..annotations.add(overrideAnnotation)
+        ..annotations.add(refOverrideAnnotation)
         ..returns = boolType
         ..name = 'isSupported'
         ..requiredParameters.add(localeParameter)
         ..lambda = true
         ..body = literalConstList(supportedLanguages)
             .property("contains")
-            .call([locale.property("languageCode")]).code,
+            .call([refLocale.property("languageCode")]).code,
     );
 
 Method _shouldReload(String className) {
@@ -40,13 +43,13 @@ Method _shouldReload(String className) {
       "/// Returns true if the resources for this delegate should be loaded",
       "/// again by calling the [load] method.",
     ])
-    ..annotations.add(overrideAnnotation)
+    ..annotations.add(refOverrideAnnotation)
     ..returns = boolType
     ..name = 'shouldReload'
     ..requiredParameters.add(Parameter(
       (param) => param
         ..name = 'old'
-        ..type = _localizationDelegateOf(className),
+        ..type = localizationDelegateOf(className),
     ))
     ..lambda = true
     ..body = literalFalse.code);
@@ -61,14 +64,14 @@ Method _load(String className) {
       ..docs.addAll([
         "/// Loads the JSON associated with the given [locale] using [Strings].",
       ])
-      ..annotations.add(overrideAnnotation)
-      ..returns = _futureOf(className)
+      ..annotations.add(refOverrideAnnotation)
+      ..returns = futureOf(className)
       ..name = 'load'
       ..modifier = MethodModifier.async
       ..requiredParameters.add(localeParameter)
       ..body = Block.of([
         refer(className).newInstance([]).assignVar(fieldName).statement,
-        field.property(_loadMethodName).call([locale]).awaited.statement,
+        field.property(strLoadMethodName).call([refLocale]).awaited.statement,
         field.returned.statement,
       ]),
   );

@@ -1,31 +1,30 @@
-part of 'generator.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:rosetta_generator/src/utils.dart';
 
-const String _keyDividerChar = ".";
+const String chrKeyDivider = ".";
 
-const String _keysClassName = "_\$Keys";
-const String _localeName = "locale";
-const String _loadMethodName = "load";
-const String _translateMethodName = "_translate";
-const String _translationsFieldName = "_translations";
-const String _loadJsonStr = "jsonStr";
-const String _loadJsonMap = "jsonMap";
-const String _keyName = "key";
-const String _innerHelper = "_\$";
+const String strKeysClassName = "_\$Keys";
+const String strLocaleName = "locale";
+const String strLoadMethodName = "load";
+const String strTranslateMethodName = "_translate";
+const String strTranslationsFieldName = "_translations";
+const String strLoadJsonStr = "jsonStr";
+const String strLoadJsonMap = "jsonMap";
+const String strKeyName = "key";
+const String strInnerHelper = "_\$";
 
-const Reference locale = Reference(_localeName);
-const Reference overrideAnnotation = Reference("override");
+const Reference refLocale = Reference(strLocaleName);
+const Reference refOverrideAnnotation = Reference("override");
 
-const Reference translate = Reference(_translateMethodName);
-const Reference translations = Reference(_translationsFieldName);
-const Reference jsonStr = Reference(_loadJsonStr);
-const Reference jsonMap = Reference(_loadJsonMap);
-const Reference key = Reference(_keyName);
-const Reference keysClass = Reference(_keysClassName);
-const Reference innerHelper = Reference(_innerHelper);
-const Reference _this = Reference("this");
-
-final TypeChecker _interceptorTypeChecker = TypeChecker.fromRuntime(Intercept);
+const Reference refTranslate = Reference(strTranslateMethodName);
+const Reference refTranslations = Reference(strTranslationsFieldName);
+const Reference refJsonStr = Reference(strLoadJsonStr);
+const Reference refJsonMap = Reference(strLoadJsonMap);
+const Reference refKey = Reference(strKeyName);
+const Reference refKeysClass = Reference(strKeysClassName);
+const Reference refInnerHelper = Reference(strInnerHelper);
+const Reference refThis = Reference("this");
 
 final Parameter localeParameter = Parameter((pb) => pb
-  ..name = _localeName
-  ..type = _typeOf('Locale'));
+  ..name = strLocaleName
+  ..type = typeOf('Locale'));
