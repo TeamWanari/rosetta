@@ -24,12 +24,12 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
     Stone stone = parseStone(annotation);
 
     var className = element.name;
-    var languages = await getLanguages(buildStep, stone.path);
+    var languages = await getLanguages(buildStep, stone);
 
     List<Translation> translations;
 
     try {
-      translations = await getKeyMap(buildStep, stone.path);
+      translations = await getKeyMap(buildStep, stone);
     } on FormatException catch (_) {
       throw InvalidGenerationSourceError(
         "Invalid JSON format! Validate the JSON's contents.",

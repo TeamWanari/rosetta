@@ -1,3 +1,5 @@
+import 'grouping.dart';
+
 /// An annotation that generates code for translation Jsons
 /// located in the directory described in [Stone.path] parameter.
 class Stone {
@@ -17,10 +19,13 @@ class Stone {
   /// JSON assets from the root bundle.
   final String package;
 
+  final Grouping grouping;
+
   /// Create an annotation that will generate the Helper and
   /// Delegate classes for the translations located at [path].
   const Stone({
     this.path,
     this.package,
+    this.grouping,
   }) : assert(path != null);
 }

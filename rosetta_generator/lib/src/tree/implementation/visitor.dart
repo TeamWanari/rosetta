@@ -3,8 +3,8 @@ import 'package:rosetta_generator/src/consts.dart';
 import 'package:rosetta_generator/src/entities/interceptor.dart';
 import 'package:rosetta_generator/src/tree/abstract/node.dart';
 import 'package:rosetta_generator/src/tree/abstract/visitor.dart';
+import 'package:rosetta_generator/src/tree/entities/product.dart';
 import 'package:rosetta_generator/src/tree/implementation/node.dart';
-import 'package:rosetta_generator/src/tree/implementation/product.dart';
 import 'package:rosetta_generator/src/utils.dart';
 
 class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
@@ -27,10 +27,19 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
     );
   }
 
+  ///The _generateClasses method returns with the methodList and as a
+  ///SIDE EFFECT it also adds the necessary elements to the classList.
+
   void _generate(TranslationNode node) {
     classList.clear();
     methodList = _generateClasses(node, pascalPrefix: "");
   }
+
+  ///Recursively visits each Node and returns the required methods.
+  ///SIDE EFFECT: Adds the necessary elements to the classList
+  ///
+  ///The methods will end up in the Helper and the generated Classes
+  ///must be added to the file.
 
   List<Method> _generateClasses(TranslationNode node,
       {String pascalPrefix = ""}) {
@@ -41,14 +50,20 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
           _getChildMethods(node, pascalPrefix: pascalPrefix);
 
       if (!node.isRoot) {
+        ///If it's not the Root Node, then a Class should be generated for it
+        ///and the methods passed upwards.
         classList.add(_generateNodeClass(node, childMethods));
         return [_generateNodeMethod(node)];
       } else {
+        ///If it's the Root Node, then we just pass the methods, that should
+        ///be in the Helper.
         return childMethods;
       }
     }
   }
 
+  ///Returns the Getter trough which the Class associated with the Node
+  ///should be accessed in the ascendant Class.
   Method _generateNodeMethod(TranslationNode node) {
     return Method(
       (mb) => mb
@@ -63,6 +78,8 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
     );
   }
 
+  ///Returns the Getter/Interceptor trough which the value of the Node
+  ///should be accessed in the ascendant Class.
   Method _generateLeafMethod(TranslationNode node) {
     Iterable<Interceptor> matchResults = interceptors.where((i) =>
         i.filter == null ||
@@ -93,6 +110,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       }));
   }
 
+  ///Generates a simple Getter for a given Node.
   void _buildGetterMethod(TranslationNode node, MethodBuilder methodBuilder) {
     methodBuilder
       ..type = MethodType.getter
@@ -101,6 +119,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
           .call([refKeysClass.property(node.translation.keyVariable)]).code;
   }
 
+  ///Generates a Simple Interceptor method for a given Node.
   void _buildSimpleInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
     methodBuilder
@@ -115,6 +134,8 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       ]).code;
   }
 
+  ///Generates a Parametrized Interceptor method for a
+  ///given node, if it has a matching.
   void _buildParametrizedInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
     var interceptorMethod = node.helper.property(interceptor.name);
@@ -146,6 +167,8 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
           .code;
   }
 
+  ///Return the Getters and interceptors that should be in the Class
+  ///associated with the Node, based on its children.
   List<Method> _getChildMethods(TranslationNode node,
       {String pascalPrefix = "", bool parentIsRoot = false}) {
     List<Method> childMethods = [];
@@ -157,6 +180,9 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
     return childMethods;
   }
 
+  ///Generates a Class associated with the given Node.
+  ///This will be called for each Non-Leaf Node, except the Root.
+  ///(The contents of the Root Class goes in the Helper.)
   Class _generateNodeClass(TranslationNode node, List<Method> childMethods) {
     return Class((classBuilder) {
       classBuilder

@@ -4,7 +4,7 @@ import 'package:rosetta_generator/src/consts.dart';
 import 'package:rosetta_generator/src/entities/interceptor.dart';
 import 'package:rosetta_generator/src/entities/translation.dart';
 import 'package:rosetta_generator/src/tree/abstract/visitor.dart';
-import 'package:rosetta_generator/src/tree/implementation/product.dart';
+import 'package:rosetta_generator/src/tree/entities/product.dart';
 import 'package:rosetta_generator/src/tree/implementation/tree.dart';
 import 'package:rosetta_generator/src/tree/implementation/visitor.dart';
 import 'package:rosetta_generator/src/utils.dart';
@@ -16,10 +16,12 @@ List<Class> generateHelper(
   List<Interceptor> interceptors,
 ) {
   TranslationTree tree = TranslationTree();
-  tree.build(translations);
+  tree.build(translations, stone.grouping?.separator);
 
   Visitor visitor = TranslationVisitor(
       interceptors: interceptors, helperRef: refer("_\$${className}Helper"));
+
+  ///The result should be added to the Helper class and the file.
   TranslationProduct product = tree.visit(visitor);
 
   var helper = Class(
@@ -44,6 +46,8 @@ List<Class> generateHelper(
           cb.methods.addAll(generateInterceptorMethods(interceptors));
         }
 
+        ///The result's methods should be added to the Helper and
+        ///also a private field for each.
         cb.methods.addAll(product.helperMethods);
         cb.fields.addAll(product.helperMethods
             .where((child) => child.returns != stringType)
@@ -54,6 +58,7 @@ List<Class> generateHelper(
       }),
   );
 
+  ///The additional Classes in the result must be included in the file.
   return [helper] + product.translationClasses;
 }
 

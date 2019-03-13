@@ -6,7 +6,7 @@ import 'package:rosetta/rosetta.dart';
 
 part 'translation.g.dart';
 
-@Stone(path: 'i18n')
+@Stone(path: 'i18n', grouping: Grouping.withSeparator(separator: "我"))
 class Translation with _$TranslationHelper {
   static LocalizationsDelegate<Translation> delegate = _$TranslationDelegate();
 
@@ -14,9 +14,6 @@ class Translation with _$TranslationHelper {
     return Localizations.of(context, Translation);
   }
 
-  @Intercept.withFilter(filter: ".*ello.*")
-  String interceptEllo(String b) => b;
-
-  @Intercept.simple()
-  String interceptAll(String a) => a;
+  @Intercept.withFilter(filter: ".*you.*")
+  String interceptYou(String b) => b;
 }

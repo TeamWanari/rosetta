@@ -5,7 +5,6 @@ import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:glob/glob.dart';
 import 'package:rosetta/rosetta.dart';
-import 'package:rosetta_generator/src/consts.dart';
 import 'package:rosetta_generator/src/entities/interceptor.dart';
 import 'package:rosetta_generator/src/entities/translation.dart';
 import 'package:rosetta_generator/src/validations.dart';
@@ -14,23 +13,31 @@ import 'package:source_gen/source_gen.dart';
 Stone parseStone(ConstantReader annotation) => Stone(
       path: annotation.peek("path")?.stringValue,
       package: annotation.peek("package")?.stringValue,
+      grouping: annotation.peek("grouping") != null
+          ? Grouping.withSeparator(
+              separator:
+                  annotation.peek("grouping").peek("separator").stringValue,
+            )
+          : null,
     );
 
 //TODO: getLanguage+getKayMap merge => Localization Class (language keys, key)
 
 /// Find all referenced translation files for [Stone.path]
-Future<List<String>> getLanguages(BuildStep step, String path) async =>
+Future<List<String>> getLanguages(BuildStep step, Stone stone) async =>
     await step
-        .findAssets(Glob(path, recursive: true))
-        .map(_assetIdToLocaleId)
+        .findAssets(Glob(stone.path, recursive: true))
+        .map((it) => _assetIdToLocaleId(it, stone))
         .toList();
 
 /// All translations grouped by their keys
-Future<List<Translation>> getKeyMap(BuildStep step, String path) async {
+Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   var mapping = <String, List<String>>{};
 
   /// Find all referenced translation files for [Stone.path]
-  var assets = await step.findAssets(Glob(path, recursive: true)).toList();
+  var assets =
+      await step.findAssets(Glob(stone.path, recursive: true)).toList();
+
 
   /// Parse all translations
   for (var entity in assets) {
@@ -47,7 +54,8 @@ Future<List<Translation>> getKeyMap(BuildStep step, String path) async {
   /// Convert the map to translation objects
   var translations = List<Translation>();
   mapping.forEach((id, trans) => translations.add(
-        Translation(key: id, translations: trans),
+        Translation(
+            key: id, translations: trans, separator: stone.grouping?.separator),
       ));
 
   return translations;
@@ -95,8 +103,13 @@ List<Interceptor> getInterceptors(ClassElement classElement) =>
         .map((element) => Interceptor(element: element))
         .toList();
 
-String _assetIdToLocaleId(AssetId assetId) =>
-    assetId.uri.pathSegments.last.split(chrKeyDivider).first;
+String _assetIdToLocaleId(AssetId assetId, Stone stone) {
+  String id = assetId.uri.pathSegments.last;
+  if (stone.grouping != null) {
+    id = id.split(stone.grouping.separator).first;
+  }
+  return id;
+}
 
 String stoneAssetsPath(Stone stone) => stone.package != null
     ? "packages/${stone.package}/${stone.path}"

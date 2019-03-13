@@ -2,6 +2,10 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:rosetta_generator/src/validations.dart';
 
+///Represents an interceptor with a given filter.
+///
+///Defines how the filtered translation string should be accessed.
+
 class Interceptor {
   MethodElement element;
 

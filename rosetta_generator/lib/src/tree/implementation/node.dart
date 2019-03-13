@@ -35,15 +35,22 @@ class TranslationNode extends Node<Translation, TranslationNode> {
   TranslationNode getChild(String name) =>
       children.firstWhere((child) => child.name == name, orElse: null);
 
+  ///Recursively adds nodes to the tree
   void _addNode(List<String> parts, {Translation translation}) {
     String nextName = parts.first;
     bool containsNextName = contains(nextName);
 
+    ///If the current subpart of the splitted key is the final part.
+    ///If this part should be a Leaf or a Node
     if (parts.length > 1) {
+      ///If it's not a Leaf then we have to decide if the Node already exists.
       if (containsNextName) {
+        /// If it exists and is a Leaf, then this key is invalid
+        /// Leafs must not have adjacent.
         if (getChild(nextName).isLeaf()) {
           throw Exception("Leaf already exsists! - ${nextName}");
         } else {
+          ///If it exists, then we can move to the next subpart.
           List<String> nextParts = List.of(parts);
           nextParts.removeAt(0);
 
@@ -53,6 +60,7 @@ class TranslationNode extends Node<Translation, TranslationNode> {
           );
         }
       } else {
+        ///If doesn't exist we must create it and then move to the next subpart.
         TranslationNode nextNode =
             TranslationNode(name: nextName, prefix: prefix + pascalName);
         children.add(nextNode);
@@ -65,13 +73,18 @@ class TranslationNode extends Node<Translation, TranslationNode> {
         );
       }
     } else {
+      ///It should be a Leaf.
+      ///If a Node with the same name already exists.
       if (!containsNextName) {
+        ///The Leaf should be added.
+        ///The recursion ends here.
         TranslationNode nextNode = TranslationNode(
             translation: translation,
             name: nextName,
             prefix: prefix + pascalName);
         children.add(nextNode);
       } else {
+        ///If a Node already exists, then this key is already present.
         throw Exception("Leaf already exsists! - $nextName}");
       }
     }
@@ -83,7 +96,7 @@ class TranslationNode extends Node<Translation, TranslationNode> {
       throw Exception("Translatins should only be added to the root node!");
     }
 
-    var listClone = List.of(content.tieredKey);
+    var listClone = List.of(content.groupedKey);
     _addNode(listClone, translation: content);
   }
 }

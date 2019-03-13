@@ -1,8 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:rosetta_generator/src/utils.dart';
 
-const String chrKeyDivider = ".";
-
 const String strKeysClassName = "_\$Keys";
 const String strLocaleName = "locale";
 const String strLoadMethodName = "load";
