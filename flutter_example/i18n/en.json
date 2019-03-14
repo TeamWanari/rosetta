@@ -1,9 +1,10 @@
 {
   "hello_there": "Hello there!",
-  "see我it": "See it!",
-  "see我you我soon": "See you soon!",
-  "see我you我later": "See you later!",
-  "see我you我tomorrow": "See you tomorrow!",
-  "good我lu_ck": "Good luck!",
-  "good我id_ea": "Good idea!"
+  "see.you.sometime_soon": "See you sometime soon!",
+  "see.you.later": "See you later!",
+  "see.you.tomorrow": "See you tomorrow!",
+  "good.luck": "Good luck!",
+  "good.idea": "Good idea!",
+  "example.ex_ample.ex": "ex",
+  "example.ex_ample.ample": "ample"
 }

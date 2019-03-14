@@ -16,21 +16,16 @@ class Translation {
   String get keyVariable {
     if (separator != null) {
       return key
-              .split(separator)
-              .map((part) => ReCase(part).camelCase)
-              .toList()
-              .join("\$") +
-          "\$";
+          .split(separator)
+          .map((part) => ReCase(part).camelCase)
+          .toList()
+          .join("\$");
     } else {
-      return ReCase(key).camelCase + "\$";
+      return ReCase(key).camelCase;
     }
   }
 
   Translation({String key, this.translations, this.separator}) {
-    if (key.contains(".") && separator != ".") {
-      throw Exception("The key must not contain dots! Invalid key: ${key}");
-    }
-
     this.key = key;
     groupedKey =
         List.of((this.separator == null ? [key] : key.split(this.separator)));

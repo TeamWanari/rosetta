@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
@@ -37,7 +38,6 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   /// Find all referenced translation files for [Stone.path]
   var assets =
       await step.findAssets(Glob(stone.path, recursive: true)).toList();
-
 
   /// Parse all translations
   for (var entity in assets) {

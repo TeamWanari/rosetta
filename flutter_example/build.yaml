@@ -2,5 +2,5 @@ targets:
   $default:
     sources:
       include:
-      - i18n/en.json
+      - i18n/**
       - lib/**

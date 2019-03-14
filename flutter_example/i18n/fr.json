@@ -1,7 +1,10 @@
 {
-    "hello_there": "Bonjour!",
-    "see_you_soon": "À bientôt!",
-    "see.you.soon": "See You Soon!",
-    "see.you.later": "See You Later!",
-    "see.saw": "See Saw!"
+  "hello_there": "Bonjour!",
+  "see.you.sometime_soon": "À bientôt!",
+  "see.you.later": "À plus tard!",
+  "see.you.tomorrow": "À demain!",
+  "good.luck": "Bonne chance!",
+  "good.idea": "Bonne idée!",
+  "example.ex_ample.ex": "ex",
+  "example.ex_ample.ample": "emple"
 }

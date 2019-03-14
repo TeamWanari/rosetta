@@ -6,7 +6,7 @@ import 'package:rosetta/rosetta.dart';
 
 part 'translation.g.dart';
 
-@Stone(path: 'i18n', grouping: Grouping.withSeparator(separator: "我"))
+@Stone(path: 'i18n', grouping: Grouping.withSeparator())
 class Translation with _$TranslationHelper {
   static LocalizationsDelegate<Translation> delegate = _$TranslationDelegate();
 

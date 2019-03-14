@@ -1,7 +1,10 @@
 {
-    "hello_there": "Привет!",
-    "see_you_soon": "до скорой встречи!",
-    "see.you.soon": "See You Soon!",
-    "see.you.later": "See You Later!",
-    "see.saw": "See Saw!"
+  "hello_there": "Привет!",
+  "see.you.sometime_soon": "До скорой встречи!",
+  "see.you.later": "Увидимся позже!",
+  "see.you.tomorrow": "До завтра!",
+  "good.luck": "Удачи!",
+  "good.idea": "Отличная идея!",
+  "example.ex_ample.ex": "пр",
+  "example.ex_ample.ample": "имер"
 }

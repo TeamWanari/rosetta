@@ -1,7 +1,10 @@
 {
-    "hello_there": "Szia!",
-    "see_you_soon": "Hamarosan találkozunk!",
-    "see.you.soon": "See You Soon!",
-    "see.you.later": "See You Later!",
-    "see.saw": "See Saw!"
+  "hello_there": "Szia!",
+  "see.you.sometime_soon": "Valamikor hamarosan találkozunk!",
+  "see.you.later": "Viszlát később!",
+  "see.you.tomorrow": "Viszlát holnapig!",
+  "good.luck": "Sok szerencsét!",
+  "good.idea": "Jó ötlet!",
+  "example.ex_ample.ex": "pé",
+  "example.ex_ample.ample": "lda"
 }
