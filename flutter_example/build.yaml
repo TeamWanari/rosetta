@@ -1,4 +1,6 @@
 targets:
   $default:
-    builders:
-      rosetta:
+    sources:
+      include:
+      - i18n/**
+      - lib/**

@@ -7,7 +7,7 @@ targets:
 builders:
   rosetta:
     target: ":rosetta_generator"
-    import: "package:rosetta_generator/rosetta_generator.dart"
+    import: "package:rosetta_generator/generator.dart"
     builder_factories: ["rosettaStoneBuilder"]
     build_extensions: {
       ".dart": [".rosetta.g.part"],
