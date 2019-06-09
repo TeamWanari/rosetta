@@ -88,7 +88,7 @@ Method generateTranslationMethod() => Method(
             ..named = true
             ..type = stringType),
         )
-        ..body = ttranslations.index(key).code
+        ..body = translations.index(key).code
         ..returns = stringType,
     );
 
