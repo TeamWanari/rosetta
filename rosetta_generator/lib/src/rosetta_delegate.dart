@@ -19,7 +19,8 @@ List<Method> _delegateMethods(String className, List<String> languages) => [
       _load(className),
     ];
 
-Method _isSupported(List<String> supportedLanguages) => Method(
+Method _isSupported(List<String> supportedLanguages) {
+  return Method(
       (builder) => builder
         ..docs.addAll([
           "/// Whether the the given [locale.languageCode] code has a JSON associated with it.",
@@ -28,11 +29,18 @@ Method _isSupported(List<String> supportedLanguages) => Method(
         ..returns = boolType
         ..name = 'isSupported'
         ..requiredParameters.add(localeParameter)
-        ..lambda = true
-        ..body = literalConstList(supportedLanguages)
-            .property("contains")
-            .call([locale.property("languageCode")]).code,
+        ..body = Block.of([
+          ...generateAssetName(),
+          literalConstList(supportedLanguages)
+              .property("contains")
+              .call([
+                assetName
+              ])
+              .returned
+              .statement
+        ])
     );
+}
 
 Method _shouldReload(String className) {
   return Method((mb) => mb

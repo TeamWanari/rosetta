@@ -44,9 +44,7 @@ Class generateHelper(
 Method generateLoader(Stone stone) {
   var assetLoader = refer("rootBundle").property("loadString");
   var decodeJson = refer("json").property("decode");
-  var assetLoaderTemplate =
-      "${_stoneAssetsPath(stone)}/\${$_localeName.languageCode}.json";
-
+  var assetLoaderTemplate = "${_stoneAssetsPath(stone)}/$_replaceKey.json";
   return Method(
     (mb) => mb
       ..docs.addAll([
@@ -57,15 +55,15 @@ Method generateLoader(Stone stone) {
       ..modifier = MethodModifier.async
       ..requiredParameters.add(localeParameter)
       ..body = Block.of([
+        ...generateAssetName(),
         assetLoader
-            .call([literalString(assetLoaderTemplate)])
+            .call([
+              literalString(assetLoaderTemplate).property('replaceAll').call([literalString(_replaceKey), assetName])
+            ])
             .awaited
             .assignVar(_loadJsonStr)
             .statement,
-        decodeJson
-            .call([jsonStr])
-            .assignVar(_loadJsonMap, _mapOf(stringType, dynamicType))
-            .statement,
+        decodeJson.call([jsonStr]).assignVar(_loadJsonMap, _mapOf(stringType, dynamicType)).statement,
         translations
             .assign(
               jsonMap.property("map<String, String>").call([
@@ -90,7 +88,7 @@ Method generateTranslationMethod() => Method(
             ..named = true
             ..type = stringType),
         )
-        ..body = translations.index(key).code
+        ..body = translations.index(key).equalTo(literalNull).conditional(literalString(''), translations.index(key)).code
         ..returns = stringType,
     );
 
@@ -218,4 +216,19 @@ List<Method> generateParametrizedInterceptedMethods(
             ),
       )
       .toList();
+}
+
+List<Code> generateAssetName() {
+  var asset = locale.property("languageCode");
+  return <Code>[
+    asset.assignVar(_assetName).statement,
+    const Code("if ("),
+    const Code("isNotEmpty($_localeName.scriptCode)"),
+    const Code(")"),
+    const Code("$_assetName += '_\${$_localeName.scriptCode}';"),
+    const Code("if ("),
+    const Code("isNotEmpty($_localeName.countryCode)"),
+    const Code(")"),
+    const Code("$_assetName += '_\${$_localeName.countryCode}';"),
+  ];
 }
