@@ -88,7 +88,7 @@ Method generateTranslationMethod() => Method(
             ..named = true
             ..type = stringType),
         )
-        ..body = translations.index(key).equalTo(literalNull).conditional(literalString(''), translations.index(key)).code
+        ..body = ttranslations.index(key).code
         ..returns = stringType,
     );
 
