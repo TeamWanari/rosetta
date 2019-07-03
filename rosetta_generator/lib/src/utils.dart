@@ -104,11 +104,7 @@ List<Interceptor> getInterceptors(ClassElement classElement) =>
         .toList();
 
 String _assetIdToLocaleId(AssetId assetId, Stone stone) {
-  String id = assetId.uri.pathSegments.last;
-  if (stone.grouping != null) {
-    id = id.split(stone.grouping.separator).first;
-  }
-  return id;
+  return  assetId.uri.pathSegments.last.split('.').first;
 }
 
 String stoneAssetsPath(Stone stone) => stone.package != null
