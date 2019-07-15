@@ -5,4 +5,12 @@ travis:
     chrome: stable
   branches:
     only:
-      - master
+      - stable
+      - development
+  stages:
+    - name: analyze
+      if: 'true'
+    - name: publish_dry
+      if: 'true'
+    - name: publish
+      if: 'branch = stable'

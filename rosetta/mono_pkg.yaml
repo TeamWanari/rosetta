@@ -7,3 +7,7 @@ stages:
   - analyze:
     - dartfmt
     - dartanalyzer: --fatal-infos --fatal-warnings .
+  - publish_dry:
+    - command: pub publish --dry-run
+  - publish:
+    - command: pub publish

@@ -19,6 +19,16 @@ EXIT_CODE=0
 while (( "$#" )); do
   TASK=$1
   case $TASK in
+  command_0) echo
+    echo -e '\033[1mTASK: command_0\033[22m'
+    echo -e 'pub publish --dry-run'
+    pub publish --dry-run || EXIT_CODE=$?
+    ;;
+  command_1) echo
+    echo -e '\033[1mTASK: command_1\033[22m'
+    echo -e 'pub publish'
+    pub publish || EXIT_CODE=$?
+    ;;
   dartanalyzer) echo
     echo -e '\033[1mTASK: dartanalyzer\033[22m'
     echo -e 'dartanalyzer --fatal-infos --fatal-warnings .'
