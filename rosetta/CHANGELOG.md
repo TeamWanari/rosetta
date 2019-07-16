@@ -1,3 +1,8 @@
+# v0.1.3
+
+## Improvements:
+* Extends `@Stone` annotation with `grouping` attribute to enable support for grouped language resources.
+
 # v0.1.2
 
 ## Improvements:

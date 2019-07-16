@@ -1,4 +1,27 @@
 {
-    "hello_there": "Szia!",
-    "see_you_soon": "Hamarosan találkozunk!"
+  "hello_there": "Szia!",
+  "see.you.sometime_soon": "Valamikor hamarosan találkozunk!",
+  "see.you.later": "Viszlát később!",
+  "see.you.tomorrow": "Viszlát holnapig!",
+  "good.luck": "Sok szerencsét!",
+  "good.idea": "Jó ötlet!",
+  "example.ex_ample.ex": "pé",
+  "example.ex_ample.ample": "lda",
+
+  "one.dot.simple" : "one",
+  "one_underline_simple" : "one",
+  "one.two.dot.simple" : "one two",
+  "one_two_underline_simple" : "one two",
+  "one.two.three.dot.simple" : "one two three",
+  "one_two_three_underline_simple" : "one two three",
+  "one.dot.amount" : "one %d filtered",
+  "one_underline_amount" : "one %d filtered",
+  "one.two.dot.amount" : "one two %d filtered",
+  "one_two_underline_amount" : "one two %d filtered",
+  "one.two.three.dot.amount": "one two three %d filtered",
+  "one_two_three_underline_amount": "one two three %d filtered",
+
+  "interceptor_simple" : "interceptor simple",
+  "interceptor_filtered" : "interceptor filtered"
+
 }

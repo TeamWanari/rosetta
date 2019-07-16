@@ -1,4 +1,26 @@
 {
-    "hello_there": "Привет!",
-    "see_you_soon": "до скорой встречи!"
+  "hello_there": "Привет!",
+  "see.you.sometime_soon": "До скорой встречи!",
+  "see.you.later": "Увидимся позже!",
+  "see.you.tomorrow": "До завтра!",
+  "good.luck": "Удачи!",
+  "good.idea": "Отличная идея!",
+  "example.ex_ample.ex": "пр",
+  "example.ex_ample.ample": "имер",
+
+  "one.dot.simple" : "one",
+  "one_underline_simple" : "one",
+  "one.two.dot.simple" : "one two",
+  "one_two_underline_simple" : "one two",
+  "one.two.three.dot.simple" : "one two three",
+  "one_two_three_underline_simple" : "one two three",
+  "one.dot.amount" : "one %d filtered",
+  "one_underline_amount" : "one %d filtered",
+  "one.two.dot.amount" : "one two %d filtered",
+  "one_two_underline_amount" : "one two %d filtered",
+  "one.two.three.dot.amount": "one two three %d filtered",
+  "one_two_three_underline_amount": "one two three %d filtered",
+
+  "interceptor_simple" : "interceptor simple",
+  "interceptor_filtered" : "interceptor filtered"
 }

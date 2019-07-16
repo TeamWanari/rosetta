@@ -1,3 +1,10 @@
+# v0.1.3
+
+## Improvements:
+* Add support for `Rosetta`'s grouping attribute
+* Changed analyzer dependency version
+* Code quality improvements
+
 # v0.1.2
 
 ## Improvements:
