@@ -6,7 +6,20 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(Translation.of(context).helloThere),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              Translation.of(context).helloThere,
+            ),
+            Text(
+              Translation.of(context).resolve(TranslationKeys.goodIdea),
+            ),
+            Text(Translation.of(context).oneDotAmount([1])),
+            Text(Translation.of(context)
+                .resolve(TranslationKeys.oneTwoDotAmount)([1])),
+          ],
+        ),
       ),
     );
   }

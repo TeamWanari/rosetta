@@ -9,9 +9,9 @@ class TestScaffold extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => TestScaffoldState(
-    localizationDelegate: localizationDelegate,
-    getTranslationList: getTranslationList,
-  );
+        localizationDelegate: localizationDelegate,
+        getTranslationList: getTranslationList,
+      );
 }
 
 class TestScaffoldState extends State<TestScaffold> {

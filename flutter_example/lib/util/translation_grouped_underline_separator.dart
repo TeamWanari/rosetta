@@ -9,8 +9,10 @@ import 'package:sprintf/sprintf.dart';
 part 'translation_grouped_underline_separator.g.dart';
 
 @Stone(path: 'i18n', grouping: Grouping.withSeparator(separator: '_'))
-class TranslationGroupedUnderlineSeparator with _$TranslationGroupedUnderlineSeparatorHelper {
-  static LocalizationsDelegate<TranslationGroupedUnderlineSeparator> delegate = _$TranslationGroupedUnderlineSeparatorDelegate();
+class TranslationGroupedUnderlineSeparator
+    with _$TranslationGroupedUnderlineSeparatorHelper {
+  static LocalizationsDelegate<TranslationGroupedUnderlineSeparator> delegate =
+      _$TranslationGroupedUnderlineSeparatorDelegate();
 
   static TranslationGroupedUnderlineSeparator of(BuildContext context) {
     return Localizations.of(context, TranslationGroupedUnderlineSeparator);
@@ -21,5 +23,4 @@ class TranslationGroupedUnderlineSeparator with _$TranslationGroupedUnderlineSep
 
   @Intercept.simple()
   String simpleIntercept(String translation) => translation;
-
 }

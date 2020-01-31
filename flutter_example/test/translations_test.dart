@@ -10,17 +10,22 @@ void main() {
       (WidgetTester tester) async {
     List<String> expectedTexts = getExpectedSeparatorTexts();
 
+    String simpleId = TranslationKeys.oneTwoDotSimple;
+
+    String interceptedId = TranslationKeys.oneTwoDotAmount;
+
     List<String> Function(BuildContext context) getTranslationList =
         (BuildContext context) {
       return [
         Translation.of(context).oneDotSimple,
-        Translation.of(context).oneTwoDotSimple,
+        Translation.of(context).resolve(simpleId),
         Translation.of(context).oneTwoThreeDotSimple,
         Translation.of(context).oneDotAmount([1]),
-        Translation.of(context).oneTwoDotAmount([1]),
+        Translation.of(context).resolve(interceptedId)([1]),
         Translation.of(context).oneTwoThreeDotAmount([1]),
       ];
     };
+
     // Build our app and trigger a frame.
     await tester.pumpWidget(TestApp(
       localizationDelegate: Translation.delegate,

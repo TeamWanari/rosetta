@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_example/util/translation.dart';
 import 'package:flutter_example/util/translation_grouped_dot_separator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,15 +11,24 @@ void main() {
       (WidgetTester tester) async {
     List<String> expectedTexts = getExpectedSeparatorTexts();
 
+    String simpleId = TranslationKeys.oneTwoDotSimple;
+
+    String interceptedId = TranslationKeys.oneDotAmount;
+
     List<String> Function(BuildContext context) getTranslationList =
         (BuildContext context) {
       return [
         TranslationGroupedDotSeparator.of(context).one.dot.simple,
-        TranslationGroupedDotSeparator.of(context).one.two.dot.simple,
+        TranslationGroupedDotSeparator.of(context).resolve(simpleId),
         TranslationGroupedDotSeparator.of(context).one.two.three.dot.simple,
-        TranslationGroupedDotSeparator.of(context).one.dot.amount([1]),
+        TranslationGroupedDotSeparator.of(context).resolve(interceptedId)([1]),
         TranslationGroupedDotSeparator.of(context).one.two.dot.amount([1]),
-        TranslationGroupedDotSeparator.of(context).one.two.three.dot.amount([1]),
+        TranslationGroupedDotSeparator.of(context)
+            .one
+            .two
+            .three
+            .dot
+            .amount([1]),
       ];
     };
     // Build our app and trigger a frame.

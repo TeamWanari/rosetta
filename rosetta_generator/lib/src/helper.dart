@@ -8,9 +8,12 @@ import 'package:rosetta_generator/src/tree/entities/product.dart';
 import 'package:rosetta_generator/src/tree/implementation/tree.dart';
 import 'package:rosetta_generator/src/tree/implementation/visitor.dart';
 import 'package:rosetta_generator/src/utils.dart';
+import 'package:code_builder/src/specs/expression.dart';
 
 List<Class> generateHelper(
   String className,
+  String keysClassName,
+  String interceptionsClassName,
   Stone stone,
   List<Translation> translations,
   List<Interceptor> interceptors,
@@ -18,7 +21,7 @@ List<Class> generateHelper(
   TranslationTree tree = TranslationTree();
   tree.build(translations, stone.grouping?.separator);
 
-  Visitor visitor = TranslationVisitor(
+  Visitor visitor = TranslationVisitor(keysClassName,
       interceptors: interceptors, helperRef: refer("_\$${className}Helper"));
 
   ///The result should be added to the Helper class and the file.
@@ -34,13 +37,22 @@ List<Class> generateHelper(
       ])
       ..abstract = true
       ..name = "_\$${className}Helper"
-      ..fields.add(
+      ..fields.addAll([
         Field((fb) => fb
+          ..docs.add("/// Contains the translated strings for each key.")
           ..name = strTranslationsFieldName
           ..type = mapOf(stringType, stringType)),
-      )
-      ..methods.add(generateLoader(stone))
+        Field((fb) => fb
+          ..docs.addAll([
+            "/// Contains the string translations or interceptor"
+                "/// methods for each key."
+          ])
+          ..name = strResolutionsName
+          ..type = mapOf(stringType, dynamicType))
+      ])
+      ..methods.add(generateLoader(stone, product.resolutionMap))
       ..methods.add(generateTranslationMethod())
+      ..methods.add(generateResolveMethod())
       ..update((cb) {
         if (interceptors.isNotEmpty) {
           cb.methods.addAll(generateInterceptorMethods(interceptors));
@@ -62,7 +74,7 @@ List<Class> generateHelper(
   return [helper] + product.translationClasses;
 }
 
-Method generateLoader(Stone stone) {
+Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
   var assetLoader = refer("rootBundle").property("loadString");
   var decodeJson = refer("json").property("decode");
   var assetLoaderTemplate =
@@ -94,6 +106,9 @@ Method generateLoader(Stone stone) {
               ]),
             )
             .statement,
+        refResolutions
+            .assign(literalMap(interceptorMap, stringType, dynamicType))
+            .statement
       ]),
   );
 }
@@ -128,3 +143,20 @@ List<Method> generateInterceptorMethods(List<Interceptor> interceptors) =>
                 ..returns = itc.returns,
             ))
         .toList();
+
+Method generateResolveMethod() => Method(
+      (mb) => mb
+        ..docs.addAll([
+          "/// Returns the requested processed string resource associated with the given [key].",
+        ])
+        ..name = strResolveMethodName
+        ..lambda = true
+        ..requiredParameters.add(
+          Parameter((pb) => pb
+            ..name = strKeyName
+            ..named = true
+            ..type = stringType),
+        )
+        ..body = refResolutions.index(refKey).code
+        ..returns = dynamicType,
+    );

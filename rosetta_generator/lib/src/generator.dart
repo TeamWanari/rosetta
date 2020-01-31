@@ -24,6 +24,8 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
     Stone stone = parseStone(annotation);
 
     var className = element.name;
+    var keysClassName = className + "Keys";
+    var interceptionsClassName = "_\$${className}Interceptions";
     var languages = await getLanguages(buildStep, stone);
 
     List<Translation> translations;
@@ -43,9 +45,10 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
     final file = Library((lb) => lb
       ..body.addAll([
             generateDelegate(className, languages),
-            generateKeysClass(translations),
+            generateKeysClass(keysClassName, translations),
           ] +
-          generateHelper(className, stone, translations, interceptors)));
+          generateHelper(className, keysClassName, interceptionsClassName,
+              stone, translations, interceptors)));
 
     final DartEmitter emitter = DartEmitter(Allocator());
     return DartFormatter().format('${file.accept(emitter)}');
