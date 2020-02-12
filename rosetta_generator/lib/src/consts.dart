@@ -1,11 +1,12 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:rosetta_generator/src/utils.dart';
 
-const String strKeysClassName = "_\$Keys";
 const String strLocaleName = "locale";
 const String strLoadMethodName = "load";
 const String strTranslateMethodName = "_translate";
 const String strTranslationsFieldName = "_translations";
+const String strResolutionsName = "_resolutions";
+const String strResolveMethodName = "resolve";
 const String strLoadJsonStr = "jsonStr";
 const String strLoadJsonMap = "jsonMap";
 const String strKeyName = "key";
@@ -16,10 +17,10 @@ const Reference refOverrideAnnotation = Reference("override");
 
 const Reference refTranslate = Reference(strTranslateMethodName);
 const Reference refTranslations = Reference(strTranslationsFieldName);
+const Reference refResolutions = Reference(strResolutionsName);
 const Reference refJsonStr = Reference(strLoadJsonStr);
 const Reference refJsonMap = Reference(strLoadJsonMap);
 const Reference refKey = Reference(strKeyName);
-const Reference refKeysClass = Reference(strKeysClassName);
 const Reference refInnerHelper = Reference(strInnerHelper);
 const Reference refThis = Reference("this");
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_example/util/translation.dart';
 import 'package:flutter_example/util/translation_grouped_underline_separator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,15 +11,33 @@ void main() {
       (WidgetTester tester) async {
     List<String> expectedTexts = getExpectedSeparatorTexts();
 
+    String simpleId = TranslationKeys.oneTwoUnderlineSimple;
+
+    String interceptedId = TranslationKeys.oneTwoUnderlineAmount;
+
     List<String> Function(BuildContext context) getTranslationList =
         (BuildContext context) {
       return [
         TranslationGroupedUnderlineSeparator.of(context).one.underline.simple,
-        TranslationGroupedUnderlineSeparator.of(context).one.two.underline.simple,
-        TranslationGroupedUnderlineSeparator.of(context).one.two.three.underline.simple,
-        TranslationGroupedUnderlineSeparator.of(context).one.underline.amount([1]),
-        TranslationGroupedUnderlineSeparator.of(context).one.two.underline.amount([1]),
-        TranslationGroupedUnderlineSeparator.of(context).one.two.three.underline.amount([1]),
+        TranslationGroupedUnderlineSeparator.of(context).resolve(simpleId),
+        TranslationGroupedUnderlineSeparator.of(context)
+            .one
+            .two
+            .three
+            .underline
+            .simple,
+        TranslationGroupedUnderlineSeparator.of(context)
+            .one
+            .underline
+            .amount([1]),
+        TranslationGroupedUnderlineSeparator.of(context)
+            .resolve(interceptedId)([1]),
+        TranslationGroupedUnderlineSeparator.of(context)
+            .one
+            .two
+            .three
+            .underline
+            .amount([1]),
       ];
     };
     // Build our app and trigger a frame.
