@@ -1,7 +1,6 @@
 # v0.2.0
 
 ## Improvements:
-* Add string resolution by id feature
 * Update versions
 
 # v0.1.3
