@@ -138,9 +138,11 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       MethodBuilder methodBuilder, Interceptor interceptor) {
     methodBuilder
       ..type = MethodType.getter
-      ..body = (node.isInHelper ? refThis : refInnerHelper)
-          .property(strResolveMethodName)
+      ..body = refResolve
           .call([keysClassRef.property(node.translation.keyVariable)]).code;
+    // ..body = (node.isInHelper ? refThis : refInnerHelper)
+    //     .property(strResolveMethodName + 'test')
+    //     .call([keysClassRef.property(node.translation.keyVariable)]).code;
 
     resolutionMap.addEntries([
       MapEntry(
@@ -160,7 +162,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
         .skip(1)
         .map((e) => Parameter((pb) => pb
           ..name = e.name
-          ..type = refer(e.type.displayName)))
+          ..type = refer(e.type.getDisplayString())))
         .toList();
 
     var internalParameters = interceptor.element.parameters
@@ -188,8 +190,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
             ..body = refer(interceptor.name)
                 .call(
                   List()
-                    ..add(refer(strTranslateMethodName)
-                        .call([
+                    ..add(refer(strTranslateMethodName).call([
                       refer(keysClassName)
                           .property(node.translation.keyVariable),
                     ]))

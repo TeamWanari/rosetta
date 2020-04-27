@@ -1,3 +1,14 @@
+# v0.2.1
+
+## Improvements:
+* Optimize the generator to generate a stricter code, matching stricter analysis option
+* fix: implicit-dynamic warnings in the generated code
+* fix: use final instead of vars
+* add: more typings where finals replace vars
+* fix: avoid using this where the resolve method is called
+* change: use static const instead of static final props for the generated Enum class for Keys
+* add: typed MapEntry
+
 # v0.2.0
 
 ## Improvements:
