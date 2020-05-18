@@ -20,7 +20,7 @@ jobs:
       with:
         flutter-version: '1.17.1'
     - run: cd flutter_example
-    - run: flutter pub get
-    - run: flutter packages pub run build_runner build --delete-conflicting-outputs
-    - run: flutter test
-    - run: flutter build apk
+    - run: cd flutter_example && flutter pub get
+    - run: cd flutter_example && flutter packages pub run build_runner build --delete-conflicting-outputs
+    - run: cd flutter_example && flutter test
+    - run: cd flutter_example && flutter build apk
