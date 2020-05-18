@@ -32,7 +32,7 @@ Method _isSupported(List<String> supportedLanguages) => Method(
         ..name = 'isSupported'
         ..requiredParameters.add(localeParameter)
         ..lambda = true
-        ..body = literalConstList(supportedLanguages)
+        ..body = literalConstList(supportedLanguages, stringType)
             .property("contains")
             .call([refLocale.property("languageCode")]).code,
     );
@@ -70,7 +70,10 @@ Method _load(String className) {
       ..modifier = MethodModifier.async
       ..requiredParameters.add(localeParameter)
       ..body = Block.of([
-        refer(className).newInstance([]).assignVar(fieldName).statement,
+        refer(className)
+            .newInstance([])
+            .assignFinal(fieldName, typeOf(className))
+            .statement,
         field.property(strLoadMethodName).call([refLocale]).awaited.statement,
         field.returned.statement,
       ]),
