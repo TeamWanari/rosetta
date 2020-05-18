@@ -13,7 +13,7 @@ Class generateKeysClass(String keysClassName, List<Translation> translations) {
                   ..name = translation.keyVariable
                   ..type = stringType
                   ..static = true
-                  ..modifier = FieldModifier.final$
+                  ..modifier = FieldModifier.constant
                   ..assignment = literalString(translation.key).code,
               ))
           .toList()),

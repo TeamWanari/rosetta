@@ -15,6 +15,7 @@ const String strInnerHelper = "_\$";
 const Reference refLocale = Reference(strLocaleName);
 const Reference refOverrideAnnotation = Reference("override");
 
+const Reference refResolve = Reference(strResolveMethodName);
 const Reference refTranslate = Reference(strTranslateMethodName);
 const Reference refTranslations = Reference(strTranslationsFieldName);
 const Reference refResolutions = Reference(strResolutionsName);
