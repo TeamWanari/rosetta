@@ -2,9 +2,9 @@ name: Dart CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ stable, development, master ]
   pull_request:
-    branches: [ master ]
+    branches: [ stable, development, master ]
 
 jobs:
   build:
@@ -16,9 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Cd Example
+      run: cd flutter_example
     - name: Install dependencies
       run: pub get
-    - name: Generate Code
+    - name: Generate code
       run: pub run build_runner build --delete-conflicting-outputs
     - name: Run tests
       run: pub run test
