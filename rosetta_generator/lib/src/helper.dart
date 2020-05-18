@@ -94,12 +94,10 @@ Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
             .call([literalString(assetLoaderTemplate)])
             .awaited
             .assignFinal(strLoadJsonStr, stringType)
-            // .assignVar(strLoadJsonStr)
             .statement,
         decodeJson
             .call([refJsonStr])
             .assignFinal(strLoadJsonMap, mapOf(stringType, dynamicType))
-            // .assignVar(strLoadJsonMap, mapOf(stringType, dynamicType))
             .statement,
         refTranslations
             .assign(

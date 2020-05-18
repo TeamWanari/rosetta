@@ -136,13 +136,18 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   ///Generates a Simple Interceptor method for a given Node.
   void _buildSimpleInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
-    methodBuilder
-      ..type = MethodType.getter
-      ..body = refResolve
-          .call([keysClassRef.property(node.translation.keyVariable)]).code;
-    // ..body = (node.isInHelper ? refThis : refInnerHelper)
-    //     .property(strResolveMethodName + 'test')
-    //     .call([keysClassRef.property(node.translation.keyVariable)]).code;
+    if (node.isInHelper) {
+      methodBuilder
+        ..type = MethodType.getter
+        ..body = refResolve
+            .call([keysClassRef.property(node.translation.keyVariable)]).code;
+    } else {
+      methodBuilder
+        ..type = MethodType.getter
+        ..body = refInnerHelper
+            .property(strResolveMethodName)
+            .call([keysClassRef.property(node.translation.keyVariable)]).code;
+    }
 
     resolutionMap.addEntries([
       MapEntry(
@@ -169,17 +174,28 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
         .skip(1)
         .map((e) => refer(e.name))
         .toList();
-
-    methodBuilder
-      ..requiredParameters.addAll(methodParameters)
-      ..types.addAll(interceptor.element.typeParameters
-          .map((tp) => refer(tp.name))
-          .toList())
-      ..body = (node.isInHelper ? refThis : refInnerHelper)
-          .property(strResolveMethodName)
-          .call([keysClassRef.property(node.translation.keyVariable)])
-          .call(internalParameters)
-          .code;
+    if (node.isInHelper) {
+      methodBuilder
+        ..requiredParameters.addAll(methodParameters)
+        ..types.addAll(interceptor.element.typeParameters
+            .map((tp) => refer(tp.name))
+            .toList())
+        ..body = refResolve
+            .call([keysClassRef.property(node.translation.keyVariable)])
+            .call(internalParameters)
+            .code;
+    } else {
+      methodBuilder
+        ..requiredParameters.addAll(methodParameters)
+        ..types.addAll(interceptor.element.typeParameters
+            .map((tp) => refer(tp.name))
+            .toList())
+        ..body = refInnerHelper
+            .property(strResolveMethodName)
+            .call([keysClassRef.property(node.translation.keyVariable)])
+            .call(internalParameters)
+            .code;
+    }
 
     resolutionMap.addEntries([
       MapEntry(

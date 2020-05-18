@@ -74,7 +74,6 @@ Method _load(String className) {
             .newInstance([])
             .assignFinal(fieldName, typeOf(className))
             .statement,
-        // refer(className).newInstance([]).assignVar(fieldName).statement,
         field.property(strLoadMethodName).call([refLocale]).awaited.statement,
         field.returned.statement,
       ]),
