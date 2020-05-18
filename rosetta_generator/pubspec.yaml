@@ -5,9 +5,9 @@ description: >-
   for Flutter localizations.
 version: 0.2.0
 authors:
-- Adam Hosszu <edemlonger@gmail.com>
-- Renato Kiss <renato.kiss.dev@gmail.com>
-- Tamas Agocs <agta91@gmail.com>
+  - Adam Hosszu <edemlonger@gmail.com>
+  - Renato Kiss <renato.kiss.dev@gmail.com>
+  - Tamas Agocs <agta91@gmail.com>
 homepage: https://github.com/TeamWanari/rosetta
 
 environment:
@@ -15,13 +15,13 @@ environment:
 
 dependencies:
   build: ">=0.12.6"
-  source_gen: ^0.9.0
-  code_builder: ^3.0.0
+  source_gen: ">0.9.0"
+  code_builder: ">3.0.0"
   dart_style: ">=1.0.0"
   analyzer: ">=0.32.4"
-  recase: ^2.0.0
-  path: ^1.6.2
-  glob: ^1.1.0
+  recase: ">2.0.0"
+  path: ">1.1.2"
+  glob: ">1.1.0"
   rosetta:
     path: ../rosetta/
 
