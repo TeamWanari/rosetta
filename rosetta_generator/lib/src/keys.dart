@@ -1,13 +1,12 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:rosetta_generator/src/consts.dart';
 import 'package:rosetta_generator/src/entities/translation.dart';
 import 'package:rosetta_generator/src/utils.dart';
 
-Class generateKeysClass(List<Translation> translations) {
+Class generateKeysClass(String keysClassName, List<Translation> translations) {
   return Class(
     (cb) => cb
       ..docs.add("/// Contains the keys read from the JSON")
-      ..name = strKeysClassName
+      ..name = keysClassName
       ..fields.addAll(translations
           .map((translation) => Field(
                 (fb) => fb

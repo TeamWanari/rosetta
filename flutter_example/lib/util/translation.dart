@@ -21,5 +21,4 @@ class Translation with _$TranslationHelper {
 
   @Intercept.simple()
   String simpleIntercept(String translation) => translation;
-
 }

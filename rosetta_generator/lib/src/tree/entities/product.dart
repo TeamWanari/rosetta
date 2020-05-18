@@ -11,6 +11,8 @@ import 'package:code_builder/code_builder.dart';
 class TranslationProduct {
   final List<Method> helperMethods;
   final List<Class> translationClasses;
+  final Map<String,Spec> resolutionMap;
 
-  TranslationProduct({this.helperMethods, this.translationClasses});
+  TranslationProduct(
+      {this.helperMethods, this.translationClasses, this.resolutionMap});
 }

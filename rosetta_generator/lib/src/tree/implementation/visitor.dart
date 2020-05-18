@@ -10,10 +10,17 @@ import 'package:rosetta_generator/src/utils.dart';
 class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   List<Class> classList = [];
   List<Method> methodList = [];
+  Map<String, Spec> resolutionMap = Map();
   List<Interceptor> interceptors;
   Reference helperRef;
+  String keysClassName;
+  Reference keysClassRef;
 
-  TranslationVisitor({List<Interceptor> interceptors, Reference helperRef}) {
+  TranslationVisitor(this.keysClassName,
+      {List<Interceptor> interceptors,
+      Reference helperRef,
+      String keyClassName}) {
+    keysClassRef = Reference(keysClassName);
     this.interceptors = interceptors == null ? [] : interceptors;
     this.helperRef = helperRef == null ? Reference("") : helperRef;
   }
@@ -22,9 +29,9 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   TranslationProduct visit(TranslationNode node) {
     _generate(node);
     return TranslationProduct(
-      helperMethods: methodList,
-      translationClasses: classList,
-    );
+        helperMethods: methodList,
+        translationClasses: classList,
+        resolutionMap: resolutionMap);
   }
 
   ///The _generateClasses method returns with the methodList and as a
@@ -116,7 +123,14 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       ..type = MethodType.getter
       ..body = node.helper
           .property(strTranslateMethodName)
-          .call([refKeysClass.property(node.translation.keyVariable)]).code;
+          .call([keysClassRef.property(node.translation.keyVariable)]).code;
+
+    resolutionMap.addEntries([
+      MapEntry(
+          node.translation.key,
+          refTranslate
+              .call([keysClassRef.property(node.translation.keyVariable)]).code)
+    ]);
   }
 
   ///Generates a Simple Interceptor method for a given Node.
@@ -124,21 +138,24 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       MethodBuilder methodBuilder, Interceptor interceptor) {
     methodBuilder
       ..type = MethodType.getter
-      ..body = node.helper.property(interceptor.name).call([
-        (node.isInHelper
-                ? refTranslate
-                : refInnerHelper.property(strTranslateMethodName))
-            .call([
-          refer(strKeysClassName).property(node.translation.keyVariable),
-        ]),
-      ]).code;
+      ..body = (node.isInHelper ? refThis : refInnerHelper)
+          .property(strResolveMethodName)
+          .call([keysClassRef.property(node.translation.keyVariable)]).code;
+
+    resolutionMap.addEntries([
+      MapEntry(
+          node.translation.key,
+          refer(interceptor.name).call([
+            refTranslate.call(
+                [refer(keysClassName).property(node.translation.keyVariable)])
+          ]))
+    ]);
   }
 
   ///Generates a Parametrized Interceptor method for a
   ///given node, if it has a matching.
   void _buildParametrizedInterceptorMethod(TranslationNode node,
       MethodBuilder methodBuilder, Interceptor interceptor) {
-    var interceptorMethod = node.helper.property(interceptor.name);
     var methodParameters = interceptor.element.parameters
         .skip(1)
         .map((e) => Parameter((pb) => pb
@@ -156,15 +173,30 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       ..types.addAll(interceptor.element.typeParameters
           .map((tp) => refer(tp.name))
           .toList())
-      ..body = interceptorMethod
-          .call(
-            List()
-              ..add(node.helper.property(strTranslateMethodName).call([
-                refer(strKeysClassName).property(node.translation.keyVariable),
-              ]))
-              ..addAll(internalParameters),
-          )
+      ..body = (node.isInHelper ? refThis : refInnerHelper)
+          .property(strResolveMethodName)
+          .call([keysClassRef.property(node.translation.keyVariable)])
+          .call(internalParameters)
           .code;
+
+    resolutionMap.addEntries([
+      MapEntry(
+          node.translation.key,
+          Method((mb) => mb
+            ..lambda = true
+            ..requiredParameters.addAll(methodParameters)
+            ..body = refer(interceptor.name)
+                .call(
+                  List()
+                    ..add(refer(strTranslateMethodName)
+                        .call([
+                      refer(keysClassName)
+                          .property(node.translation.keyVariable),
+                    ]))
+                    ..addAll(internalParameters),
+                )
+                .code))
+    ]);
   }
 
   ///Return the Getters and interceptors that should be in the Class

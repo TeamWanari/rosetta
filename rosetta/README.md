@@ -2,7 +2,7 @@
 
 [![Pub](https://img.shields.io/pub/v/rosetta.svg)](https://pub.dartlang.org/packages/rosetta)
 
-This is a localization library to simplify Flutter localization with the help of code generation. It contains annotations to configure the `rosetta_generator`, which produces Helper classes for localization files, which can be used with `flutter_localizations` library. 
+This is a localization library to simplify Flutter localization with the help of code generation. It contains annotations to configure the `rosetta_generator`, which produces Helper classes for localization files, which can be used with `flutter_localizations` library.
 
 ## Configuration
 
@@ -22,8 +22,8 @@ dependencies:
 The latest version is [![Pub](https://img.shields.io/pub/v/rosetta_generator.svg)](https://pub.dartlang.org/packages/rosetta_generator)
 
 ```yaml
-dev_dependencies:  
-  build_runner: '>=0.10.3 <1.2.0'
+dev_dependencies:
+  build_runner: ^1.1.0
   rosetta_generator: ^latest_version
 ```
 
@@ -60,7 +60,7 @@ class Translation {
 }
 ```
 
-Annotate the class with the **rosetta** `Stone` annotation. The **path** parameter should point to a directory containing the [languageCode].json localization files. 
+Annotate the class with the **rosetta** `Stone` annotation. The **path** parameter should point to a directory containing the [languageCode].json localization files.
 
 ```dart
 @Stone(path: 'i18n')
@@ -99,9 +99,9 @@ flutter packages pub run build_runner watch
 ```
 
 This process will generate 3 classes (let's assume that the annotated class was called `Translation` as in the example above):
-* **`_$Keys`**: Contains all your keys as static fields, this is currently for internal use.
+* **`TranslationKeys`**: Contains all your keys as static fields, this is currently for internal use.
 * **`_$TranslationDelegate`**: This is an implementation of `LocalizationsDelegate<Translation>`, this should be passed to `MaterialApp` or `CupertinoApp` as a localization delegate. Also should be passed to the static `delegate` attribute of your original class.
-* **`_$TranslationHelper`**: An abstract class, which is meant to be used as an abstract base or mixed in to your annotated class. Contains functions to access the localized strings for each key (ex.: `String get emptyList => _translate(_$Keys.emptyList);`). 
+* **`_$TranslationHelper`**: An abstract class, which is meant to be used as an abstract base or mixed in to your annotated class. Contains functions to access the localized strings for each key (ex.: `String get emptyList => this.resolve(TranslationKeys.emptyList);`).
 
 If you apply the generated classes you will end up something like this:
 
@@ -125,14 +125,21 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Text(
-          	/// Returns a string repesented with a key "hello_there" in the localization files.
-            Translation.of(context).helloThere,
-          ),
+          child: Column(
+	          children: [
+	          Text(
+				  /// Returns a string repesented with a key "hello_there" in the localization files.
+			      Translation.of(context).helloThere,
+	          ),
+	          Text(
+				  /// Resolves the string, associated with the given key. The result is same as above.
+			      Translation.of(context).resolve(TranslationKeys.helloThere),
+	          ),]
+		   )
         ),
       ),
       localizationsDelegates: [
-      	/// Returns the generated delegate, which will setup the [Translation] instances.
+       /// Returns the generated delegate, which will setup the [Translation] instances.
         Translation.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -151,7 +158,7 @@ class MyApp extends StatelessWidget {
 The generated code backing the above functionality looks something like this (changes according to translation input):
 ```dart
 class _$TranslationDelegate extends LocalizationsDelegate<Translation> {
-  
+
   @override
   bool isSupported(Locale locale) => ["en"].contains(locale.languageCode);
 
@@ -166,7 +173,7 @@ class _$TranslationDelegate extends LocalizationsDelegate<Translation> {
   }
 }
 
-class _$Keys {
+class TranslationKeys {
   static final String helloThere = "hello_there";
 
   static final String seeYouSoon = "see_you_soon";
@@ -174,6 +181,7 @@ class _$Keys {
 
 abstract class _$TranslationHelper {
   Map<String, String> _translations;
+  Map<String, dynamic> _resolutions;
 
   Future<void> load(Locale locale) async {
     var jsonStr =
@@ -181,12 +189,17 @@ abstract class _$TranslationHelper {
     Map<String, dynamic> jsonMap = json.decode(jsonStr);
     _translations = jsonMap
         .map<String, String>((key, value) => MapEntry(key, value as String));
+    _resolutions = <String, dynamic>{
+	    'hello_there': _translate(_translate(TranslationKeys.helloThere)),
+	    'see_you_soon': _translate(_translate(TranslationKeys.seeYouSoon )),
+	};
   }
 
   String _translate(String key) => _translations[key];
+  dynamic resolve(String key) => _resolutions[key];
 
-  String get helloThere => _translate(_$Keys.helloThere);
-  String get seeYouSoon => _translate(_$Keys.seeYouSoon);
+  String get helloThere => this.resolve(TranslationKeys.helloThere);
+  String get seeYouSoon => this.resolve(TranslationKeys.seeYouSoon);
 }
 ```
 
@@ -194,7 +207,7 @@ abstract class _$TranslationHelper {
 
 In most cases we will end up with some kind of parametrization in some of our resouces, like displaying currencies, amount, etc... This is where interceptors can help us.
 
-We can define our interceptor logic in `@Stone` annotated classes using `@Intercept` annotations. The annotation has two variants `@Intecept.simple()`, which describes interceptor logic for all resources, and `@Intercept.withFilter(filter)`, which provides custom logic for resources matching the provided filter pattern. 
+We can define our interceptor logic in `@Stone` annotated classes using `@Intercept` annotations. The annotation has two variants `@Intecept.simple()`, which describes interceptor logic for all resources, and `@Intercept.withFilter(filter)`, which provides custom logic for resources matching the provided filter pattern.
 
 The below example shows our previous `Translations` class with interceptors.
 
@@ -206,13 +219,13 @@ class Translation with _$TranslationHelper { // Generated mixin class or you can
   static Translation of(BuildContext context) {
     return Localizations.of(context, Translation);
   }
-  
+
   @Intercept.withFilter(filter: r'%(?:(\d+)\$)?([\+\-\#0 ]*)(\d+|\*)?(?:\.(\d+|\*))?([a-z%])')
   String paramIntercept(String translation, var args) => sprintf(translation, args);
 
-  
+
   @Intercept.simple()
-  String simpleIntercept(String translation) => ">>> $translation";  
+  String simpleIntercept(String translation) => ">>> $translation";
 }
 ```
 
@@ -222,14 +235,15 @@ So, in the above example, if we have a key, which has atleast one matching trans
 
 The interceptor function must return `String` and also has to declare a `String` parameter as it's first parameter. After the first parameter you can declare other parameters if you like, but keep in mind, that all accessors generated for the matching keys will have the same parameters as the tailing ones following the first string input.
 
-The interceptors in the examples will produce accessor methods like below:
+The interceptors in the examples will produce accessor entries in the resolution map like below:
 
 ```dart
-String get helloLabel => simpleIntercept(_translate(_$Keys.helloLabel));
+'hello_there': simpleIntercept(_translate(TranslationKeys.helloThere))
 ```
 and
 ```dart
-String helloLabel(var args) => paramIntercept(_translate(_$Keys.helloLabel), args);
+ 'hello_label': (dynamic args) =>
+	 paramIntercept(_translate(TranslationKeys.helloLabel), args),
 ```
 
 If we swap the two interceptors then the `simpleIntercept` method will be applied to all keys, because it matches any. And the filtering one will be applied to the remaining ones (which is an empty set of keys).
