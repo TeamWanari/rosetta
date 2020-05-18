@@ -1,0 +1,26 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ stable, development, master ]
+  pull_request:
+    branches: [ stable, development, master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1.3.2
+      with:
+        flutter-version: '1.17.1'
+    - run: cd flutter_example
+    - run: cd flutter_example && flutter pub get
+    - run: cd flutter_example && flutter packages pub run build_runner build --delete-conflicting-outputs
+    - run: cd flutter_example && flutter test
+    - run: cd flutter_example && flutter build apk
