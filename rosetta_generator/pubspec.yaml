@@ -3,7 +3,7 @@ description: >-
   Generator tool used with Rosetta annotations.
   This generates the helper and delegate classes
   for Flutter localizations.
-version: 0.2.0
+version: 0.2.1
 authors:
   - Adam Hosszu <edemlonger@gmail.com>
   - Renato Kiss <renato.kiss.dev@gmail.com>
