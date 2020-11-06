@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'util/translation.dart';
 import 'widget/home_page.dart';
 
@@ -22,6 +23,11 @@ class MyApp extends StatelessWidget {
         const Locale("en"),
         const Locale("fr"),
         const Locale("ru"),
+        const Locale.fromSubtags(
+          languageCode: "zh",
+          scriptCode: "Hans",
+          countryCode: "CN",
+        ),
       ],
     );
   }
