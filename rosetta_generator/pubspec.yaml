@@ -11,7 +11,7 @@ authors:
 homepage: https://github.com/TeamWanari/rosetta
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
   build: '>=0.12.6 <1.2.0'
