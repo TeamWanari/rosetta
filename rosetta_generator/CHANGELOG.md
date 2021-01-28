@@ -1,3 +1,8 @@
+# v0.2.2
+
+## Improvements:
+* Update dependencies to support newer versions of Flutter
+
 # v0.2.1
 
 ## Improvements:
