@@ -9,7 +9,8 @@ import 'package:rosetta_generator/src/validations.dart';
 class Interceptor {
   MethodElement element;
 
-  Reference get returns => refer(element.returnType.name);
+  Reference get returns =>
+      refer(element.returnType.getDisplayString(withNullability: false));
 
   String get name => element.name;
 
@@ -18,7 +19,7 @@ class Interceptor {
   List<Parameter> get parameterList => element.parameters
       .map((pe) => Parameter((pb) => pb
         ..name = pe.name
-        ..type = refer(pe.type.displayName)))
+        ..type = refer(pe.type.getDisplayString(withNullability: false))))
       .toList();
 
   Interceptor({this.element}) {
