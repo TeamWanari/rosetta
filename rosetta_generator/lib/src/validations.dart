@@ -42,7 +42,7 @@ void checkInterceptorFormat(MethodElement element) {
   var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
   var isFiltered = annotation.getField("isFiltered").toBoolValue();
 
-  if (element.returnType.name != "String") {
+  if (element.returnType.getDisplayString(withNullability: false) != "String") {
     throw InvalidGenerationSourceError(
         "The intercepted method's return type should be String!" +
             " Please change the return type.",
@@ -55,7 +55,9 @@ void checkInterceptorFormat(MethodElement element) {
           "The filtered intercepted method's! first parameter" +
               " should be String! Please add a String paramter.",
           element: element);
-    } else if (element.parameters.first.type.name != "String") {
+    } else if (element.parameters.first.type
+            .getDisplayString(withNullability: false) !=
+        "String") {
       throw InvalidGenerationSourceError(
           "The filtered intercepted method's! first parameter" +
               " should be String! Please provide a String" +

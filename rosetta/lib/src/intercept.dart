@@ -11,11 +11,6 @@ class Intercept {
   final String filter;
   final bool isFiltered;
 
-  const Intercept._({
-    this.filter,
-    this.isFiltered,
-  });
-
   /// Declares the annotated method as a simple interceptor, which will be
   /// applied to all getter methods generated for the provided translations.
   ///

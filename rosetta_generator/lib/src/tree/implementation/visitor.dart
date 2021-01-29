@@ -167,7 +167,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
         .skip(1)
         .map((e) => Parameter((pb) => pb
           ..name = e.name
-          ..type = refer(e.type.getDisplayString())))
+          ..type = refer(e.type.getDisplayString(withNullability: false))))
         .toList();
 
     var internalParameters = interceptor.element.parameters
@@ -219,7 +219,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   ///Return the Getters and interceptors that should be in the Class
   ///associated with the Node, based on its children.
   List<Method> _getChildMethods(TranslationNode node,
-      {String pascalPrefix = "", bool parentIsRoot = false}) {
+      {String pascalPrefix = ""}) {
     List<Method> childMethods = [];
     for (Node child in node.children) {
       List<Method> childFields =
