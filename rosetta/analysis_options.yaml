@@ -1,5 +1,5 @@
 analyzer:
   enable-experiment:
-    - extension-methods
+    - non-nullable
   exclude:
     - example/**

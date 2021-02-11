@@ -7,8 +7,7 @@ class Intercept {
   /// The regular expression string, which will be used to find translation
   /// keys, which should be intercepted by the annotated method.
   ///
-  /// (Optional)
-  final String filter;
+  final String? filter;
   final bool isFiltered;
 
   /// Declares the annotated method as a simple interceptor, which will be

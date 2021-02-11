@@ -53,6 +53,7 @@ doc/api/
 .pub-cache/
 .pub/
 build/
+.fvm
 
 # Exclude Flutter generated classes
 **/*.g.dart
