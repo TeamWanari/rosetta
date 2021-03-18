@@ -1,3 +1,8 @@
+# v0.3.0
+
+## Improvements:
+* Change minimum SDK version to 2.12.0
+
 # v0.2.2
 
 ## Improvements:

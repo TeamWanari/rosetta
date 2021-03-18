@@ -12,6 +12,5 @@ class Grouping {
   /// an exception
   ///
   /// The default [separator] is a '.' character.
-  const Grouping.withSeparator({this.separator = "."})
-      : assert(separator != null);
+  const Grouping.withSeparator({this.separator = "."});
 }
