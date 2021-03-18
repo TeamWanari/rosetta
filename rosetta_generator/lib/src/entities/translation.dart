@@ -8,15 +8,15 @@ import 'package:recase/recase.dart';
 ///which will be generated.
 
 class Translation {
-  String key;
+  late String key;
   List<String> translations;
-  List<String> groupedKey;
-  String separator;
+  List<String>? groupedKey;
+  String? separator;
 
   String get keyVariable {
     if (separator != null) {
       return key
-          .split(separator)
+          .split(separator!)
           .map((part) => ReCase(part).camelCase)
           .toList()
           .join("\$");
@@ -25,10 +25,10 @@ class Translation {
     }
   }
 
-  Translation({String key, this.translations, this.separator}) {
+  Translation({required String key, required this.translations, this.separator}) {
     this.key = key;
     groupedKey =
-        List.of((this.separator == null ? [key] : key.split(this.separator)));
+        List.of((this.separator == null ? [key] : key.split(this.separator!)));
   }
 }
 

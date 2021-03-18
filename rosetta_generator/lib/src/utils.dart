@@ -12,7 +12,7 @@ import 'package:rosetta_generator/src/validations.dart';
 import 'package:source_gen/source_gen.dart';
 
 Stone parseStone(ConstantReader annotation) => Stone(
-      path: annotation.peek("path")?.stringValue,
+      path: annotation.read("path").stringValue,
       package: annotation.peek("package")?.stringValue,
       grouping: annotation.peek("grouping") != null
           ? Grouping.withSeparator(
@@ -52,7 +52,7 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   }
 
   /// Convert the map to translation objects
-  var translations = List<Translation>();
+  var translations = <Translation>[];
   mapping.forEach((id, trans) => translations.add(
         Translation(
             key: id, translations: trans, separator: stone.grouping?.separator),
@@ -61,7 +61,7 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   return translations;
 }
 
-Map<MethodElement, List<String>> sortKeysByInterceptors(
+Map<MethodElement?, List<String>> sortKeysByInterceptors(
   List<Translation> translations,
   List<Interceptor> interceptors,
 ) {

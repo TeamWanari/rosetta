@@ -23,7 +23,7 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
 
     Stone stone = parseStone(annotation);
 
-    var className = element.name;
+    var className = element.name!;
     var keysClassName = className + "Keys";
     var interceptionsClassName = "_\$${className}Interceptions";
     var languages = await getLanguages(buildStep, stone);

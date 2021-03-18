@@ -11,15 +11,15 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   List<Class> classList = [];
   List<Method> methodList = [];
   Map<String, Spec> resolutionMap = Map();
-  List<Interceptor> interceptors;
-  Reference helperRef;
+  late List<Interceptor> interceptors;
+  late Reference helperRef;
   String keysClassName;
-  Reference keysClassRef;
+  late Reference keysClassRef;
 
   TranslationVisitor(this.keysClassName,
-      {List<Interceptor> interceptors,
-      Reference helperRef,
-      String keyClassName}) {
+      {List<Interceptor>? interceptors,
+      Reference? helperRef,
+      String? keyClassName}) {
     keysClassRef = Reference(keysClassName);
     this.interceptors = interceptors == null ? [] : interceptors;
     this.helperRef = helperRef == null ? Reference("") : helperRef;
@@ -29,9 +29,9 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   TranslationProduct visit(TranslationNode node) {
     _generate(node);
     return TranslationProduct(
-        helperMethods: methodList,
-        translationClasses: classList,
-        resolutionMap: resolutionMap);
+        methodList,
+        classList,
+        resolutionMap);
   }
 
   ///The _generateClasses method returns with the methodList and as a
@@ -90,12 +90,12 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
   Method _generateLeafMethod(TranslationNode node) {
     Iterable<Interceptor> matchResults = interceptors.where((i) =>
         i.filter == null ||
-        node.translation.translations
-            .where(i.filter.hasMatch)
+        node.translation!.translations
+            .where(i.filter!.hasMatch)
             .toList()
             .isNotEmpty);
 
-    Interceptor interceptor =
+    Interceptor? interceptor =
         matchResults.isNotEmpty ? matchResults.first : null;
 
     return Method((mb) => mb
@@ -108,11 +108,11 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
             _buildGetterMethod(node, methodBuilder);
             break;
           case 1:
-            _buildSimpleInterceptorMethod(node, methodBuilder, interceptor);
+            _buildSimpleInterceptorMethod(node, methodBuilder, interceptor!);
             break;
           default:
             _buildParametrizedInterceptorMethod(
-                node, methodBuilder, interceptor);
+                node, methodBuilder, interceptor!);
         }
       }));
   }
@@ -123,13 +123,13 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       ..type = MethodType.getter
       ..body = node.helper
           .property(strTranslateMethodName)
-          .call([keysClassRef.property(node.translation.keyVariable)]).code;
+          .call([keysClassRef.property(node.translation!.keyVariable)]).code;
 
     resolutionMap.addEntries([
       MapEntry(
-          node.translation.key,
+          node.translation!.key,
           refTranslate
-              .call([keysClassRef.property(node.translation.keyVariable)]).code)
+              .call([keysClassRef.property(node.translation!.keyVariable)]).code)
     ]);
   }
 
@@ -140,21 +140,21 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
       methodBuilder
         ..type = MethodType.getter
         ..body = refResolve
-            .call([keysClassRef.property(node.translation.keyVariable)]).code;
+            .call([keysClassRef.property(node.translation!.keyVariable)]).code;
     } else {
       methodBuilder
         ..type = MethodType.getter
         ..body = refInnerHelper
             .property(strResolveMethodName)
-            .call([keysClassRef.property(node.translation.keyVariable)]).code;
+            .call([keysClassRef.property(node.translation!.keyVariable)]).code;
     }
 
     resolutionMap.addEntries([
       MapEntry(
-          node.translation.key,
+          node.translation!.key,
           refer(interceptor.name).call([
             refTranslate.call(
-                [refer(keysClassName).property(node.translation.keyVariable)])
+                [refer(keysClassName).property(node.translation!.keyVariable)])
           ]))
     ]);
   }
@@ -181,7 +181,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
             .map((tp) => refer(tp.name))
             .toList())
         ..body = refResolve
-            .call([keysClassRef.property(node.translation.keyVariable)])
+            .call([keysClassRef.property(node.translation!.keyVariable)])
             .call(internalParameters)
             .code;
     } else {
@@ -192,23 +192,23 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
             .toList())
         ..body = refInnerHelper
             .property(strResolveMethodName)
-            .call([keysClassRef.property(node.translation.keyVariable)])
+            .call([keysClassRef.property(node.translation!.keyVariable)])
             .call(internalParameters)
             .code;
     }
 
     resolutionMap.addEntries([
       MapEntry(
-          node.translation.key,
+          node.translation!.key,
           Method((mb) => mb
             ..lambda = true
             ..requiredParameters.addAll(methodParameters)
             ..body = refer(interceptor.name)
                 .call(
-                  List()
+                  []
                     ..add(refer(strTranslateMethodName).call([
                       refer(keysClassName)
-                          .property(node.translation.keyVariable),
+                          .property(node.translation!.keyVariable),
                     ]))
                     ..addAll(internalParameters),
                 )
@@ -223,7 +223,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
     List<Method> childMethods = [];
     for (Node child in node.children) {
       List<Method> childFields =
-          _generateClasses(child, pascalPrefix: pascalPrefix + node.pascalName);
+          _generateClasses(child as TranslationNode, pascalPrefix: pascalPrefix + node.pascalName);
       if (childFields != null) childMethods.addAll(childFields);
     }
     return childMethods;

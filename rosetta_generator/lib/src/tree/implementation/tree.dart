@@ -5,9 +5,9 @@ import 'package:rosetta_generator/src/tree/entities/product.dart';
 import 'package:rosetta_generator/src/tree/implementation/node.dart';
 
 class TranslationTree extends Tree<TranslationProduct, TranslationNode> {
-  TranslationNode rootNode;
+  late TranslationNode rootNode;
 
-  void build(List<Translation> translations, String separator) {
+  void build(List<Translation> translations, String? separator) {
     rootNode = TranslationNode(isRoot: true);
     for (Translation translation in translations) {
       rootNode.add(translation);
@@ -17,9 +17,6 @@ class TranslationTree extends Tree<TranslationProduct, TranslationNode> {
   @override
   TranslationProduct visit(
       Visitor<TranslationProduct, TranslationNode> visitor) {
-    if (rootNode == null) {
-      throw Exception("Tree not generated!");
-    }
     return visitor.visit(rootNode);
   }
 }

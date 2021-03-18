@@ -7,7 +7,7 @@ import 'package:rosetta_generator/src/tree/abstract/node.dart';
 class TranslationNode extends Node<Translation, TranslationNode> {
   String name;
   String prefix;
-  Translation translation;
+  Translation? translation;
 
   String get pascalName => name.isEmpty ? name : ReCase(name).pascalCase;
 
@@ -36,7 +36,7 @@ class TranslationNode extends Node<Translation, TranslationNode> {
       children.firstWhere((child) => child.name == name, orElse: null);
 
   ///Recursively adds nodes to the tree
-  void _addNode(List<String> parts, {Translation translation}) {
+  void _addNode(List<String> parts, {Translation? translation}) {
     String nextName = parts.first;
     bool containsNextName = contains(nextName);
 
@@ -96,7 +96,7 @@ class TranslationNode extends Node<Translation, TranslationNode> {
       throw Exception("Translatins should only be added to the root node!");
     }
 
-    var listClone = List.of(content.groupedKey);
+    var listClone = List.of(content.groupedKey!);
     _addNode(listClone, translation: content);
   }
 }

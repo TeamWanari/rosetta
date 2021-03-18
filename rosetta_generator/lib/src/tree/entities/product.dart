@@ -14,5 +14,5 @@ class TranslationProduct {
   final Map<String,Spec> resolutionMap;
 
   TranslationProduct(
-      {this.helperMethods, this.translationClasses, this.resolutionMap});
+      this.helperMethods, this.translationClasses, this.resolutionMap);
 }

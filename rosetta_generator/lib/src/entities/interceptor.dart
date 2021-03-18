@@ -14,7 +14,7 @@ class Interceptor {
 
   String get name => element.name;
 
-  RegExp filter;
+  RegExp? filter;
 
   List<Parameter> get parameterList => element.parameters
       .map((pe) => Parameter((pb) => pb
@@ -22,11 +22,11 @@ class Interceptor {
         ..type = refer(pe.type.getDisplayString(withNullability: false))))
       .toList();
 
-  Interceptor({this.element}) {
+  Interceptor({required this.element}) {
     checkInterceptorFormat(this.element);
 
     var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
-    String filterString = annotation.getField("filter").toStringValue();
+    String? filterString = annotation.getField("filter")!.toStringValue();
 
     if (filterString != null) {
       filter = RegExp(filterString);

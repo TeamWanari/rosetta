@@ -10,6 +10,8 @@ import 'package:rosetta_generator/src/tree/implementation/visitor.dart';
 import 'package:rosetta_generator/src/utils.dart';
 import 'package:code_builder/src/specs/expression.dart';
 
+import 'tree/implementation/node.dart';
+
 List<Class> generateHelper(
   String className,
   String keysClassName,
@@ -25,7 +27,7 @@ List<Class> generateHelper(
       interceptors: interceptors, helperRef: refer("_\$${className}Helper"));
 
   ///The result should be added to the Helper class and the file.
-  TranslationProduct product = tree.visit(visitor);
+  TranslationProduct product = tree.visit(visitor as Visitor<TranslationProduct, TranslationNode>);
 
   var helper = Class(
     (b) => b
@@ -60,8 +62,8 @@ List<Class> generateHelper(
 
         ///The result's methods should be added to the Helper and
         ///also a private field for each.
-        cb.methods.addAll(product.helperMethods);
-        cb.fields.addAll(product.helperMethods
+        cb.methods.addAll(product.helperMethods!);
+        cb.fields.addAll(product.helperMethods!
             .where((child) => child.returns != stringType)
             .map((child) => Field((fieldBuilder) => fieldBuilder
               ..name = "_${child.name}"
@@ -71,10 +73,10 @@ List<Class> generateHelper(
   );
 
   ///The additional Classes in the result must be included in the file.
-  return [helper] + product.translationClasses;
+  return [helper] + product.translationClasses!;
 }
 
-Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
+Method generateLoader(Stone stone, Map<String, Spec>? interceptorMap) {
   var assetLoader = refer("rootBundle").property("loadString");
   var decodeJson = refer("json").property("decode");
   var assetLoaderTemplate =
@@ -108,7 +110,7 @@ Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
             )
             .statement,
         refResolutions
-            .assign(literalMap(interceptorMap, stringType, dynamicType))
+            .assign(literalMap(interceptorMap!, stringType, dynamicType))
             .statement
       ]),
   );
