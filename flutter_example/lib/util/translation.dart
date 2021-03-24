@@ -8,7 +8,7 @@ import 'package:sprintf/sprintf.dart';
 
 part 'translation.g.dart';
 
-@Stone(path: 'i18n')
+@Stone(path: 'i18n', keyInjectionPrefix: "[#]")
 class Translation with _$TranslationHelper {
   static LocalizationsDelegate<Translation> delegate = _$TranslationDelegate();
 

@@ -52,6 +52,8 @@ List<Class> generateHelper(
       ])
       ..methods.add(generateLoader(stone, product.resolutionMap))
       ..methods.add(generateTranslationMethod())
+      ..methods.add(generateParseNestingsMethod())
+      ..methods.add(generateReplaceNestingsMethod())
       ..methods.add(generateResolveMethod())
       ..update((cb) {
         if (interceptors.isNotEmpty) {
@@ -80,6 +82,8 @@ Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
   var assetLoaderTemplate =
       "${stoneAssetsPath(stone)}/\${$strLocaleName.languageCode}.json";
 
+  String nestingPrefix = stone.keyInjectionPrefix ?? "\\\$";
+
   return Method(
     (mb) => mb
       ..docs.addAll([
@@ -107,12 +111,92 @@ Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
               ]),
             )
             .statement,
+        literalString(nestingPrefix).assignFinal(strNestingPrefix, stringType).statement,
+        refParseNestings.call([refTranslations, refNestingPrefix]).statement,
         refResolutions
             .assign(literalMap(interceptorMap, stringType, dynamicType))
             .statement
       ]),
   );
 }
+
+Method generateParseNestingsMethod() => Method.returnsVoid(
+    (mb) => mb
+        ..docs.addAll([
+          "/// Parses the translated values containing nested keys."
+        ])
+        ..name = strParseNestingsMethodName
+        ..requiredParameters.addAll([
+            Parameter((p) => p ..name = "translations" ..type = mapOf(stringType, stringType)),
+            Parameter((p) => p ..name = "nestingPrefix" ..type = stringType)
+        ])
+        ..body = Block.of([
+          refer("translations")
+            .property("keys")
+            .assignFinal(strKeys)
+            .statement,
+          refKeys
+            .property("forEach")
+            .call([
+              Method((mb) => mb
+                ..requiredParameters.addAll([
+                  Parameter((p) => p..name = "key"),
+                ])
+                ..body = refReplaceNestings.call([refer("translations"), refer("key"), refer("nestingPrefix")]).code
+              ).closure
+            ])
+            .statement
+        ])
+);
+
+Method generateReplaceNestingsMethod() => Method.returnsVoid(
+  (mb) =>
+    mb
+      ..docs.addAll([
+        "/// Replaces the nested keys used in translation values"
+      ])
+      ..name = strReplaceNestingsMethodName
+      ..requiredParameters.addAll([
+        Parameter((p) => p ..name = 'translations' ..type = mapOf(stringType, dynamicType)),
+        Parameter((p) => p ..name = 'keyToReplace' ..type = stringType),
+        Parameter((p) => p ..name = 'nestingPrefix' ..type = stringType)
+      ])
+      ..body = Block.of([
+        refer("translations")
+            .property("forEach")
+            .call([replaceNestedValue().closure])
+            .statement
+      ])
+);
+
+Method replaceNestedValue() => Method.returnsVoid((mb) => mb
+  ..requiredParameters.addAll([
+    Parameter((p) => p..name = "key"),
+    Parameter((p) => p..name = "value")
+  ])
+  ..body = Block.of([
+    // refer("value").isA(stringType)
+    //    .conditional(
+            refer("translations").property("update").call([
+              refer("key"),
+              replaceValue().closure
+            ]).statement,
+   //         refParseNestings.call([refer("value"), refer("nestingPrefix")]).expression
+     //   ).statement*/
+
+  ])
+);
+
+Method replaceValue() => Method.returnsVoid((mb) => mb
+  ..lambda = true
+  ..requiredParameters.add(Parameter((pb) => pb..name = "v"))
+  ..body = Block.of([
+    refer("v").asA(stringType).property("replaceAll").call([
+      refer("nestingPrefix").operatorAdd(refer("keyToReplace")),
+      refer("translations").index(refer("keyToReplace"))
+    ]).code
+  ])
+);
 
 Method generateTranslationMethod() => Method(
       (mb) => mb

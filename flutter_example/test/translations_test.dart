@@ -23,6 +23,7 @@ void main() {
         Translation.of(context).oneDotAmount([1]),
         Translation.of(context).resolve(interceptedId)([1]),
         Translation.of(context).oneTwoThreeDotAmount([1]),
+        Translation.of(context).nestedOne
       ];
     };
 

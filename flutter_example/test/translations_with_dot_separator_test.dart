@@ -29,6 +29,7 @@ void main() {
             .three
             .dot
             .amount([1]),
+        TranslationGroupedDotSeparator.of(context).nestedOne
       ];
     };
     // Build our app and trigger a frame.

@@ -22,5 +22,7 @@
   "one_two_three_underline_amount": "one two three %d filtered",
 
   "interceptor_simple" : "interceptor simple",
-  "interceptor_filtered" : "interceptor filtered"
+  "interceptor_filtered" : "interceptor filtered",
+
+  "nested_one": "Zero plus one is $one.dot.simple"
 }

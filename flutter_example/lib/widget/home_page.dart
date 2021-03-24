@@ -18,6 +18,7 @@ class HomePage extends StatelessWidget {
             Text(Translation.of(context).oneDotAmount([1])),
             Text(Translation.of(context)
                 .resolve(TranslationKeys.oneTwoDotAmount)([1])),
+            Text(Translation.of(context).nestedOne)
           ],
         ),
       ),

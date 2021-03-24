@@ -31,11 +31,24 @@ class Stone {
   /// different ones can be declared.
   final Grouping grouping;
 
+  /// Optional. Describes the character sequence that will be used
+  /// as a prefix to signify a nested key that is used in a value
+  /// in the translation files.
+  ///
+  /// e.g.:
+  ///
+  /// [keyInjectionPrefix] = '#>>'
+  /// [ "key2": "Hello, #>>key1" ]
+  ///
+  /// The default value is '$'.
+  final String keyInjectionPrefix;
+
   /// Create an annotation that will generate the Helper and
   /// Delegate classes for the translations located at [path].
   const Stone({
     this.path,
     this.package,
     this.grouping,
+    this.keyInjectionPrefix
   }) : assert(path != null);
 }

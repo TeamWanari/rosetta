@@ -14,6 +14,7 @@ import 'package:source_gen/source_gen.dart';
 Stone parseStone(ConstantReader annotation) => Stone(
       path: annotation.peek("path")?.stringValue,
       package: annotation.peek("package")?.stringValue,
+      keyInjectionPrefix: annotation.peek("keyInjectionPrefix")?.stringValue,
       grouping: annotation.peek("grouping") != null
           ? Grouping.withSeparator(
               separator:
@@ -52,7 +53,7 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   }
 
   /// Convert the map to translation objects
-  var translations = List<Translation>();
+  var translations = <Translation>[];
   mapping.forEach((id, trans) => translations.add(
         Translation(
             key: id, translations: trans, separator: stone.grouping?.separator),
