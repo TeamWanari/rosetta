@@ -40,7 +40,7 @@ void checkTranslationKeyMap(List<Translation> translations) {
 
 void checkInterceptorFormat(MethodElement element) {
   var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
-  var isFiltered = annotation.getField("isFiltered")!.toBoolValue()!;
+  var isFiltered = annotation!.getField("isFiltered")!.toBoolValue()!;
 
   if (element.returnType.getDisplayString(withNullability: false) != "String") {
     throw InvalidGenerationSourceError(

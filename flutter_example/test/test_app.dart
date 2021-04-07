@@ -5,7 +5,7 @@ class TestScaffold extends StatefulWidget {
 
   final Function getTranslationList;
 
-  TestScaffold({this.localizationDelegate, this.getTranslationList});
+  TestScaffold({required this.localizationDelegate, required this.getTranslationList});
 
   @override
   State<StatefulWidget> createState() => TestScaffoldState(
@@ -19,7 +19,7 @@ class TestScaffoldState extends State<TestScaffold> {
 
   final Function getTranslationList;
 
-  TestScaffoldState({this.localizationDelegate, this.getTranslationList});
+  TestScaffoldState({required this.localizationDelegate, required this.getTranslationList});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class TestApp extends StatelessWidget {
   final LocalizationsDelegate localizationDelegate;
   final Function getTranslationList;
 
-  TestApp({this.localizationDelegate, this.getTranslationList});
+  TestApp({required this.localizationDelegate, required this.getTranslationList});
 
   @override
   Widget build(BuildContext context) {

@@ -10,7 +10,7 @@ description: A Flutter example for Rosetta
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.10.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -18,15 +18,15 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  sprintf: 5.0.0
+  cupertino_icons: ^1.0.2
+  sprintf: 6.0.0
   rosetta:
     path: ../rosetta
 
 dev_dependencies:
   flutter_driver:
     sdk: flutter
-  build_runner: 1.11.0
+  build_runner: 1.12.2
   rosetta_generator:
     path: ../rosetta_generator
 

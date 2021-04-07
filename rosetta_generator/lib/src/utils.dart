@@ -17,7 +17,7 @@ Stone parseStone(ConstantReader annotation) => Stone(
       grouping: annotation.peek("grouping") != null
           ? Grouping.withSeparator(
               separator:
-                  annotation.peek("grouping").peek("separator").stringValue,
+                  annotation.peek("grouping")!.peek("separator")!.stringValue,
             )
           : null,
     );

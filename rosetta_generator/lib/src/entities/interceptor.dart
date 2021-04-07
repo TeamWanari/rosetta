@@ -26,7 +26,7 @@ class Interceptor {
     checkInterceptorFormat(this.element);
 
     var annotation = interceptorTypeChecker.firstAnnotationOfExact(element);
-    String? filterString = annotation.getField("filter")!.toStringValue();
+    String? filterString = annotation!.getField("filter")!.toStringValue();
 
     if (filterString != null) {
       filter = RegExp(filterString);
