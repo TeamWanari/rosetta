@@ -1,3 +1,8 @@
+# v0.2.2+1
+
+## Improvements:
+* Revert minimum SDK version back to 2.6.0
+
 # v0.2.2
 
 ## Improvements:
