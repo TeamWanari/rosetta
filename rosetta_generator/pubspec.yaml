@@ -23,4 +23,3 @@ dependencies:
 
 dev_dependencies:
   build_runner: ">=1.8.0 <1.12.0"
-  
