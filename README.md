@@ -4,6 +4,21 @@
 
 This is a localization library to simplify Flutter localization with the help of code generation. It generates getter functions for the localized keyset, so you don't have to worry about typos in String keys any more. 
 
+## Roadmap
+
+### [v0.3.0](https://github.com/TeamWanari/rosetta/milestone/4)
+> * [ ] Support for plurals
+> * [ ] Key nesting
+> * [ ] Desktop and web support
+ 
+### [v0.4.0](https://github.com/TeamWanari/rosetta/milestone/5)
+> * [ ] Null safety
+> * [ ] Adding support for string arrays
+
+### [v0.5.0](https://github.com/TeamWanari/rosetta/milestone/6)
+> * [ ] Adding support for translaton context
+> * [ ] Adding support for YAML localization files
+
 **IMPORTANT:**
 * Dart2 is required to use this package.
 * This project is designed for Flutter applications only
