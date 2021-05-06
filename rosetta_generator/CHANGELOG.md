@@ -1,3 +1,8 @@
+# v0.2.3
+
+## Improvements:
+* Update dart sdk to support newly supported platforms
+
 # v0.2.2+1
 
 ## Improvements:
