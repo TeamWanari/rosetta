@@ -18,6 +18,11 @@ class HomePage extends StatelessWidget {
             Text(Translation.of(context).oneDotAmount([1])),
             Text(Translation.of(context)
                 .resolve(TranslationKeys.oneTwoDotAmount)([1])),
+            Text(Translation.of(context).clicked(1)),
+            Text(Translation.of(context).clicked(0)),
+            Text(Translation.of(context).clicked(1342)),
+            Text(Translation.of(context).points(2.00)),
+            Text(Translation.of(context).points(-18))
           ],
         ),
       ),

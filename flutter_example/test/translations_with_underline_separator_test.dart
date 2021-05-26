@@ -7,7 +7,7 @@ import 'expected_results.dart';
 import 'test_app.dart';
 
 void main() {
-  testWidgets('Translation with dot separator test',
+  testWidgets('Translation with underline separator test',
       (WidgetTester tester) async {
     List<String> expectedTexts = getExpectedSeparatorTexts();
 
@@ -38,6 +38,9 @@ void main() {
             .three
             .underline
             .amount([1]),
+        TranslationGroupedUnderlineSeparator.of(context).points(1),
+        TranslationGroupedUnderlineSeparator.of(context).points(2),
+        TranslationGroupedUnderlineSeparator.of(context).points(15)
       ];
     };
     // Build our app and trigger a frame.

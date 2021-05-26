@@ -7,6 +7,9 @@ List<String> getExpectedSeparatorTexts() {
     "one 1 filtered",
     "one two 1 filtered",
     "one two three 1 filtered",
+    "You have one point",
+    "You have two points",
+    "You have exactly this many points: 15"
   ];
 }
 

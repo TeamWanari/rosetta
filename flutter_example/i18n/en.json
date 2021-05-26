@@ -22,5 +22,19 @@
   "one_two_three_underline_amount": "one two three %d filtered",
 
   "interceptor_simple" : "interceptor simple",
-  "interceptor_filtered" : "interceptor filtered"
+  "interceptor_filtered" : "interceptor filtered",
+  "points": {
+    "zero": "You have no points",
+    "one": "You have one point",
+    "two": "You have two points",
+    "other": "You have exactly this many points: %d"
+  },
+  "clicked": {
+    "zero": "You didn't click",
+    "one": "You clicked one time!",
+    "two": "You clicked two times",
+    "few": "You clicked few times!",
+    "many": "You clicked many times!",
+    "other": "You clicked too many times!"
+  }
 }

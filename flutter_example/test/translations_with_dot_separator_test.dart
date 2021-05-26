@@ -29,6 +29,9 @@ void main() {
             .three
             .dot
             .amount([1]),
+        TranslationGroupedDotSeparator.of(context).points(1),
+        TranslationGroupedDotSeparator.of(context).points(2),
+        TranslationGroupedDotSeparator.of(context).points(15)
       ];
     };
     // Build our app and trigger a frame.
