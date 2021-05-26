@@ -17,6 +17,7 @@ List<Class> generateHelper(
   Stone stone,
   List<Translation> translations,
   List<Interceptor> interceptors,
+  List<String> pluralKeys,
 ) {
   TranslationTree tree = TranslationTree();
   tree.build(translations, stone.grouping?.separator);
@@ -44,19 +45,43 @@ List<Class> generateHelper(
           ..type = mapOf(stringType, stringType)),
         Field((fb) => fb
           ..docs.addAll([
-            "/// Contains the string translations or interceptor"
-                "/// methods for each key."
+            "/// Contains the string translations or interceptor methods for each key."
           ])
           ..name = strResolutionsName
-          ..type = mapOf(stringType, dynamicType))
+          ..type = mapOf(stringType, dynamicType)),
+        Field((fb) => fb
+          ..docs.addAll(["/// Contains the plurals for each key"])
+          ..name = strPlurals
+          ..type = mapOf(stringType, dynamicType)
+          ..assignment = Code("{}"))
       ])
       ..methods.add(generateLoader(stone, product.resolutionMap))
       ..methods.add(generateTranslationMethod())
       ..methods.add(generateResolveMethod())
+      ..methods.add(generatePluralMethod())
       ..update((cb) {
         if (interceptors.isNotEmpty) {
           cb.methods.addAll(generateInterceptorMethods(interceptors));
         }
+        cb.methods.addAll(
+          pluralKeys
+              .map(
+                (e) => Method(
+                  (mb) => mb
+                    ..name = e
+                    ..returns = stringType
+                    ..lambda = true
+                    ..requiredParameters.add(
+                      Parameter((pb) => pb
+                        ..name = "value"
+                        ..named = true
+                        ..type = numberType),
+                    )
+                    ..body = Code("_getPlural(value, _plurals['$e'])"),
+                ),
+              )
+              .toList(),
+        );
 
         ///The result's methods should be added to the Helper and
         ///also a private field for each.
@@ -99,6 +124,16 @@ Method generateLoader(Stone stone, Map<String, Spec> interceptorMap) {
             .call([refJsonStr])
             .assignFinal(strLoadJsonMap, mapOf(stringType, dynamicType))
             .statement,
+        refJsonMap.property("forEach").call([
+          refer("""
+        (key, value) {
+          if (value is Map) _plurals[key] = value;
+        }
+        """)
+        ]).statement,
+        refJsonMap
+            .property("removeWhere")
+            .call([refer("(key, value) => value is! String")]).statement,
         refTranslations
             .assign(
               refJsonMap.property("map<String, String>").call([
@@ -160,4 +195,30 @@ Method generateResolveMethod() => Method(
         )
         ..body = refResolutions.index(refKey).code
         ..returns = dynamicType,
+    );
+
+Method generatePluralMethod() => Method(
+      (mb) => mb
+        ..docs.add("/// Get plural")
+        ..name = "_getPlural"
+        ..lambda = true
+        ..requiredParameters.addAll([
+          Parameter((pb) => pb
+            ..name = "value"
+            ..type = numberType),
+          Parameter((pb) => pb
+            ..name = "map"
+            ..type = mapOf(stringType, dynamicType))
+        ])
+        ..body = Code(
+          """
+        Intl.plural(value,
+        zero: map['zero']?.replaceAll('%d', value.toString()),
+        one: map['one']?.replaceAll('%d', value.toString()),
+        two: map['two']?.replaceAll('%d', value.toString()),
+        few: map['few']?.replaceAll('%d', value.toString()),
+        many: map['many']?.replaceAll('%d', value.toString()),
+        other: map['other'].replaceAll('%d', value.toString()))
+      """,
+        ),
     );

@@ -42,6 +42,7 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   /// Parse all translations
   for (var entity in assets) {
     Map<String, dynamic> jsonMap = json.decode(await step.readAsString(entity));
+    jsonMap.removeWhere((key, value) => value is! String);
     Map<String, String> translationMap = jsonMap
         .map<String, String>((key, value) => MapEntry(key, value as String));
 
@@ -52,13 +53,38 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   }
 
   /// Convert the map to translation objects
-  var translations = List<Translation>();
-  mapping.forEach((id, trans) => translations.add(
-        Translation(
-            key: id, translations: trans, separator: stone.grouping?.separator),
-      ));
+  var translations = <Translation>[];
+  mapping.forEach(
+    (id, trans) => translations.add(
+      Translation(
+          key: id, translations: trans, separator: stone.grouping?.separator),
+    ),
+  );
 
   return translations;
+}
+
+Future<List<String>> getPluralKeys(BuildStep step, Stone stone) async {
+  var keys = <String>[];
+
+  /// Find all referenced translation files for [Stone.path]
+  var assets =
+      await step.findAssets(Glob(stone.path, recursive: true)).toList();
+
+  /// Parse all plurals
+  for (var entity in assets) {
+    Map<String, dynamic> jsonMap = json.decode(await step.readAsString(entity));
+
+    /// Ignore non-plural translations
+    jsonMap.removeWhere((key, value) => value is! Map);
+
+    /// Validate the plural maps
+    checkPluralMaps(jsonMap, entity);
+
+    keys.addAll(jsonMap.keys);
+  }
+
+  return keys.toSet().toList();
 }
 
 Map<MethodElement, List<String>> sortKeysByInterceptors(
@@ -147,4 +173,8 @@ Reference get stringType => TypeReference(
 
 Reference get localeType => TypeReference(
       (trb) => trb..symbol = "Locale",
+    );
+
+Reference get numberType => TypeReference(
+      (trb) => trb..symbol = "num",
     );

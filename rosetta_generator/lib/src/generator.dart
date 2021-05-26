@@ -29,9 +29,11 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
     var languages = await getLanguages(buildStep, stone);
 
     List<Translation> translations;
+    List<String> pluralKeys;
 
     try {
       translations = await getKeyMap(buildStep, stone);
+      pluralKeys = await getPluralKeys(buildStep, stone);
     } on FormatException catch (_) {
       throw InvalidGenerationSourceError(
         "Invalid JSON format! Validate the JSON's contents.",
@@ -48,7 +50,7 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
             generateKeysClass(keysClassName, translations),
           ] +
           generateHelper(className, keysClassName, interceptionsClassName,
-              stone, translations, interceptors)));
+              stone, translations, interceptors, pluralKeys)));
 
     final DartEmitter emitter = DartEmitter(Allocator());
     return DartFormatter().format('${file.accept(emitter)}');

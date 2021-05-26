@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:rosetta/rosetta.dart';
 import 'package:rosetta_generator/src/entities/translation.dart';
 import 'package:source_gen/source_gen.dart';
@@ -23,8 +24,6 @@ void checkTranslationKeyMap(List<Translation> translations) {
 
   int requiredLength = translations.first.translations.length;
 
-  translations.where((trans) => trans.translations.length < requiredLength);
-
   List<String> invalidKeys = keysOf(translations
       .where((translation) => translation.translations.length < requiredLength)
       .toList());
@@ -36,6 +35,18 @@ void checkTranslationKeyMap(List<Translation> translations) {
           " Possibly missing: ${invalidKeys.join(", ")} .",
     );
   }
+}
+
+void checkPluralMaps(Map<String, dynamic> pluralTranslations, AssetId entity) {
+  /// Throw an exception if there's no [other] field in the plural JSON objects
+  pluralTranslations.forEach((key, pluralSubMap) {
+    if (!(pluralSubMap.containsKey("other"))) {
+      throw InvalidGenerationSourceError(
+          "Plural translation object with key [$key] does not contain required [other] field! Translation file: [${entity
+              .uri.path}]"
+      );
+    }
+  });
 }
 
 void checkInterceptorFormat(MethodElement element) {
