@@ -23,7 +23,7 @@ The latest version is [![Pub](https://img.shields.io/pub/v/rosetta_generator.svg
 
 ```yaml
 dev_dependencies:
-  build_runner: ^1.1.0
+  build_runner: ^2.0.0
   rosetta_generator: ^latest_version
 ```
 
@@ -126,20 +126,21 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: Column(
-	          children: [
-	          Text(
-				  /// Returns a string repesented with a key "hello_there" in the localization files.
-			      Translation.of(context).helloThere,
-	          ),
-	          Text(
-				  /// Resolves the string, associated with the given key. The result is same as above.
-			      Translation.of(context).resolve(TranslationKeys.helloThere),
-	          ),]
-		   )
+            children: [
+              Text(
+                /// Returns a string represented with a key "hello_there" in the localization files.
+                Translation.of(context).helloThere,
+              ),
+              Text(
+                /// Resolves the string, associated with the given key. The result is same as above.
+                Translation.of(context).resolve(TranslationKeys.helloThere),
+              ),
+            ]
+          )
         ),
       ),
       localizationsDelegates: [
-       /// Returns the generated delegate, which will setup the [Translation] instances.
+        /// Returns the generated delegate, which will setup the [Translation] instances.
         Translation.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -158,7 +159,6 @@ class MyApp extends StatelessWidget {
 The generated code backing the above functionality looks something like this (changes according to translation input):
 ```dart
 class _$TranslationDelegate extends LocalizationsDelegate<Translation> {
-
   @override
   bool isSupported(Locale locale) => ["en"].contains(locale.languageCode);
 
@@ -190,9 +190,9 @@ abstract class _$TranslationHelper {
     _translations = jsonMap
         .map<String, String>((key, value) => MapEntry(key, value as String));
     _resolutions = <String, dynamic>{
-	    'hello_there': _translate(_translate(TranslationKeys.helloThere)),
-	    'see_you_soon': _translate(_translate(TranslationKeys.seeYouSoon )),
-	};
+      'hello_there': _translate(_translate(TranslationKeys.helloThere)),
+      'see_you_soon': _translate(_translate(TranslationKeys.seeYouSoon )),
+    };
   }
 
   String _translate(String key) => _translations[key];
@@ -223,7 +223,6 @@ class Translation with _$TranslationHelper { // Generated mixin class or you can
   @Intercept.withFilter(filter: r'%(?:(\d+)\$)?([\+\-\#0 ]*)(\d+|\*)?(?:\.(\d+|\*))?([a-z%])')
   String paramIntercept(String translation, var args) => sprintf(translation, args);
 
-
   @Intercept.simple()
   String simpleIntercept(String translation) => ">>> $translation";
 }
@@ -242,8 +241,8 @@ The interceptors in the examples will produce accessor entries in the resolution
 ```
 and
 ```dart
- 'hello_label': (dynamic args) =>
-	 paramIntercept(_translate(TranslationKeys.helloLabel), args),
+'hello_label': (dynamic args) =>
+    paramIntercept(_translate(TranslationKeys.helloLabel), args),
 ```
 
 If we swap the two interceptors then the `simpleIntercept` method will be applied to all keys, because it matches any. And the filtering one will be applied to the remaining ones (which is an empty set of keys).
