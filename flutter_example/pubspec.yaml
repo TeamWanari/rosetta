@@ -26,10 +26,9 @@ dependencies:
 dev_dependencies:
   flutter_driver:
     sdk: flutter
-  build_runner: 1.11.0
+  build_runner: ^2.0.0
   rosetta_generator:
     path: ../rosetta_generator
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
