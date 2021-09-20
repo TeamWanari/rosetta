@@ -52,7 +52,7 @@ Future<List<Translation>> getKeyMap(BuildStep step, Stone stone) async {
   }
 
   /// Convert the map to translation objects
-  var translations = List<Translation>();
+  var translations = <Translation>[];
   mapping.forEach((id, trans) => translations.add(
         Translation(
             key: id, translations: trans, separator: stone.grouping?.separator),

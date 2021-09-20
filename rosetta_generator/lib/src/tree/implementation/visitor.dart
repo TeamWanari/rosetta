@@ -205,7 +205,7 @@ class TranslationVisitor extends Visitor<TranslationProduct, TranslationNode> {
             ..requiredParameters.addAll(methodParameters)
             ..body = refer(interceptor.name)
                 .call(
-                  List()
+                  []
                     ..add(refer(strTranslateMethodName).call([
                       refer(keysClassName)
                           .property(node.translation.keyVariable),

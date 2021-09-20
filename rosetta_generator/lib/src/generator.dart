@@ -50,7 +50,7 @@ class RosettaStoneGenerator extends GeneratorForAnnotation<Stone> {
           generateHelper(className, keysClassName, interceptionsClassName,
               stone, translations, interceptors)));
 
-    final DartEmitter emitter = DartEmitter(Allocator());
+    final DartEmitter emitter = DartEmitter(allocator: Allocator());
     return DartFormatter().format('${file.accept(emitter)}');
   }
 }
